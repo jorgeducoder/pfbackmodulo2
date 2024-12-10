@@ -1,7 +1,7 @@
 import passport from 'passport';
 import local from 'passport-local';
 import GitHubStrategy from 'passport-github2';
-import userManager from '../dao/users.manager.js';
+import userManager from '../controllers/user.controller.js';
 
 import config from '../config.js';
 

@@ -1,28 +1,28 @@
-import userModel from './models/user.model.js';
-import { createHash, isValidPassword } from '../utils.js';
-import { cartManagerMdb } from './cartManagerMdb.js';
+/**
+ * Las consultas directas a la base de datos, que antes realizábamos desde
+ * nuestro controlador (manager), ahora las encapsulamos en un servicio
+ * por separado, que opera exclusivamente con MongoDB.
+ * 
+ * Si necesitáramos implementar otro motor de base de datos, podríamos
+ * crear otro archivo de servicio (por ej para Mysql, Postgres, etc),
+ * sin tener que tocar la lógica de negocio en el controlador (ver users.controller.js)
+ */
 
-const cartmanager = new cartManagerMdb();
+// Ver difeencias con users.manager.js en preentrega
 
-// Manager de usuarios
+import userModel from '../dao/models/user.model.js';
 
-class UserManager {
+
+class UserService {
     constructor() {}
 
-    get = async () => {
+    get = async (filter) => {
         try {
+            if (filter) return await userModel.findOne(filter).lean();
             return await userModel.find().lean();
         } catch (err) {
             return err.message;
         }
-    }
-
-    getOne = async (filter) => {
-        try {
-            return await userModel.findOne(filter).lean();
-        } catch (err) {
-            return err.message;
-        };
     };
 
     add = async (data) => {
@@ -102,4 +102,4 @@ class UserManager {
 }
 
 
-export default UserManager;
+export default UserService;

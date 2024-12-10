@@ -4,13 +4,13 @@ import passport from 'passport';
 // sustituyo el uploader a como se utiliza para products, desde el middlewares
 //import { uploader } from '../uploader.js';
 import { uploader } from "../middlewares/multer.js";
-import UserManager from '../dao/users.manager.js';
+import UserController from '../controllers/user.controller.js';
 import initAuthStrategies from '../auth/passport.config.js';
 import { createToken, verifyToken } from '../utils.js';
 
 
 const router = Router();
-const manager = new UserManager();
+const manager = new UserController();
 initAuthStrategies();
 
 export const auth = (req, res, next) => {
