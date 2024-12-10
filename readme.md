@@ -48,5 +48,11 @@ Todos los datos se guardan en MongoDb. El usuario se da de alta con un _ID a un 
 
 La preentrega se integra con el proyecto final del modulo I.
 
+PROYECTO FINAL:
+
+Se incluye el modelo MVC (Models, Views, Controllers aislando la capa de acceso a datos de los manager para trabajar con cualquier base de datos).
+Los manager se pasan a llamar user.service.mongo y los Controllers user.controller.js que llaman a las funciones para el CRUD.
+
+
 Errores que no crashean la aplicacion:
 

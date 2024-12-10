@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { cartManagerMdb } from "../dao/cartManagerMdb.js";
-import { ProductManagerMdb } from "../dao/productManagerMdb.js";
-
+//import { cartManagerMdb } from "../dao/cartManagerMdb.js";
+//import { ProductManagerMdb } from "../dao/productManagerMdb.js";
+import CartController from '../controllers/cart.controller.js';
+import ProductController from '../controllers/product.controller.js';
 // Define los nuevos objetos CM y PM con los metodos y datos del json
-const CM = new cartManagerMdb;
+const CM = new CartController;
 
 // La nueva clase PM en principio la necesito para ver si el producto que se ingresa
 // para incorporar al carrito esta en la clase productos
-const PM = new ProductManagerMdb;
+const PM = new ProductController;
  
 
 const cartsRouter = Router();
@@ -18,7 +19,7 @@ cartsRouter.get("/", async (req, res) => {
     
     const { limit } = req.query;
 
-    let carts = await CM.getCarts();
+    let carts = await CM.get();
     if (limit) {
         carts = carts.slice(0, limit);
     }
@@ -30,7 +31,7 @@ cartsRouter.get("/", async (req, res) => {
 cartsRouter.get('/:cid', async (req, res) => {
     // Dado el id de un carrito lo muestra con sus productos utiizando populate
     let cartId = req.params.cid;
-    const cart = await CM.getcartProducts(cartId);
+    const cart = await CM.getCartProd(cartId);
 
     if (cart.error) {
         return res.status(404).send({ error: cart.error });
@@ -44,7 +45,7 @@ cartsRouter.get('/:cid', async (req, res) => {
 cartsRouter.post("/", async (req, res) => {
     //Desde la raiz mas api/carts/ se agrega un carrito nuevo sin productos. Ruta definida en app.js
     try {
-        const response = await CM.addCart();
+        const response = await CM.add();
         res.json(response);
     } catch (error) {
         res.send("Error al crear carrito")
@@ -72,21 +73,21 @@ cartsRouter.post("/productos/:pid", async (req, res) => {
     try {
 
         // Verificar si el producto existe
-        const resultp = await PM.getProductbyId(pid);
+        const resultp = await PM.getOne(pid);
        
         if (resultp.error) {
             return res.status(404).send({ error: "Producto no existe" });
         }
 
         // Agregar carrito vacio
-        const resultc = await CM.addCart();
+        const resultc = await CM.add();
         if (resultc.errors) {
             return res.status(404).send({ errors: "Error al crear nuevo carrito en cartsRouter.put" });
         }
         let cid = resultc._id;
 
         // Intentar agregar o actualizar el producto en el carrito
-        const result = await CM.addproductCart(cid, pid, quantity);
+        const result = await CM.updateProd(cid, pid, quantity);
 
         // Verificar si ocurrió un error en addproductCart
         
@@ -119,14 +120,14 @@ cartsRouter.put("/:cid/productos/:pid", async (req, res) => {
 
     try {
         // Verificar si el producto existe
-        const resultp = await PM.getProductbyId(pid);
+        const resultp = await PM.getOne(pid);
        
         if (resultp.error) {
             return res.status(404).send({ error: "Producto no existe" });
         }
 
         // Intentar agregar o actualizar el producto en el carrito
-        const result = await CM.addproductCart(cid, pid, quantity);
+        const result = await CM.updateProd(cid, pid, quantity);
 
         // Verificar si ocurrió un error en addproductCart
         
@@ -157,7 +158,7 @@ cartsRouter.delete("/:cid/productos/:pid", async (req, res) => {
 
     try {
         // Llamar al método para eliminar el producto del carrito
-        const result = await CM.deleteProductFromCart(cid, pid);
+        const result = await CM.deleteProd(cid, pid);
 
         if (!result.success) {
             return res.status(404).send({ error: result.error });
@@ -178,7 +179,7 @@ cartsRouter.delete("/:cid", async (req, res) => {
 
     try {
         // Llamar al método para eliminar el carrito
-        const result = await CM.deleteCartById(cid);
+        const result = await CM.deleteCart(cid);
 
         if (!result.success) {
             return res.status(404).send({ error: result.error });

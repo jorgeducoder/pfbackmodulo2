@@ -1,7 +1,8 @@
-import productModel from "./dao/models/productModel.js";
+import productModel from "../dao/models/productModel.js";
 import mongoose from "mongoose";
 
-class ProductManagerMdb {
+class ProductService {
+    constructor() {}
 
     async addProduct(productData) {
        
@@ -44,7 +45,7 @@ class ProductManagerMdb {
         }
     }
 
-  
+      
     async updateProduct(pid, producto) {
 
         try {
@@ -94,4 +95,4 @@ class ProductManagerMdb {
 }
 //Exporto la clase
 
-export { ProductManagerMdb };
+export default ProductService;

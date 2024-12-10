@@ -7,12 +7,11 @@ import { Router } from "express";
 // importo el uploader para subir las imagenes, una por producto
 import { uploader } from "../middlewares/multer.js";
 
-//import { ProductManager } from "../dao/productManager.js";  lo sustituimos por acceso a la base
+//import { ProductManagerMdb } from "../dao/product.service.mongo.js";
 
-import { ProductManagerMdb } from "../dao/productManagerMdb.js";
+import ProductController from '../controllers/product.controller.js';
 
-//const PM = new ProductManager("./src/saborescaseros.json");  
-const PM = new ProductManagerMdb;
+const PM = new ProductController();
 
 // Define los metodos para el router de usuarios
 const router = Router();
@@ -22,11 +21,13 @@ const router = Router();
 router.get("/", async (req, res) => {
     const {limit} = req.query;
     // Debe ir adentro del get porque utilizo products para el params, si carga uno solo es el que queda para el slice
-    let products = await PM.getProduct();
+    
+    let products = await PM.get();
+   
     if (limit) {
        products = products.slice(0, limit);
        }
-   // getProductbyId(id);
+  
     res.send(products);
 });  
 
@@ -34,7 +35,7 @@ router.get('/:pid', async (req, res) => {
     
     let productId = req.params.pid;
     // Convierto el tipo para que no haya problemas en ProductManager con el ===
-    const products = await PM.getProductbyId(parseInt(productId));
+    const products = await PM.getOne(parseInt(productId));
     res.send({products});
 });
 
@@ -63,7 +64,7 @@ router.post("/", uploader.single("img"), async (req, res) => {
     const imgPath = req.file ? req.file.path : "";
 
     try {
-        const newProduct = await PM.addProduct({
+        const newProduct = await PM.add({
             title: nombre,
             portions: porcionesNum,
             description: recetadesc,
@@ -88,13 +89,13 @@ router.post("/", uploader.single("img"), async (req, res) => {
 
 router.put("/:pid", async (req, res) => {
     const pid = req.params.pid;
-    await PM.updateProduct(pid, req.body);
+    await PM.update(pid, req.body);
     res.status(200).send({message: "Producto actualizado correctamente!"});
 })
 
 router.delete("/:pid", async (req, res) => {
     const pid = req.params.pid;
-    await PM.deleteProduct(pid);
+    await PM.delete(pid);
     console.log("Se elimino:", pid);
     res.status(201).send({message: "Producto eliminado correctamente!"});
 });

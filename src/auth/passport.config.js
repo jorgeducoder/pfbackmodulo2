@@ -4,10 +4,11 @@ import GitHubStrategy from 'passport-github2';
 import userManager from '../controllers/user.controller.js';
 
 import config from '../config.js';
+import cartManager from '../controllers/user.controller.js';
 
-import { cartManagerMdb } from '../dao/cartManagerMdb.js';
+//import { cartManagerMdb } from '../dao/cartManagerMdb.js';
 
-const cartmanager = new cartManagerMdb();
+const cartmanager = new cartManager();
 
 
 const manager = new userManager();
@@ -63,7 +64,7 @@ const initAuthStrategies = () => {
 
                     if (!foundUser) {
                         
-                        const emptyCart = await cartmanager.addCart({}); // crea un carrito vacío tmbn para GH
+                        const emptyCart = await cartmanager.add({}); // crea un carrito vacío tmbn para GH
                 
                         const user = {
                             firstName: profile._json.name.split(' ')[0],

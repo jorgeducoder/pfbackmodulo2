@@ -20,7 +20,7 @@ class ProductController {
 
     get = async () => {
         try {
-            return await service.get();
+            return await service.getProduct();
         } catch (err) {
             return err.message;
         }
@@ -28,7 +28,7 @@ class ProductController {
 
     getOne = async (filter) => {
         try {
-            return await service.get(filter);
+            return await service.getProductbyId(filter);
         } catch (err) {
             return err.message;
         };
@@ -36,7 +36,7 @@ class ProductController {
 
     add = async (data) => {
         try {
-            return await service.add(data);
+            return await service.addProduct(data);
         } catch (err) {
             return err.message;
         }
@@ -44,7 +44,7 @@ class ProductController {
 
     update = async (filter, update, options) => {
         try {
-            return await service.update(filter, update, options);
+            return await service.updateProduct(filter, update, options);
         } catch (err) {
             return err.message;
         }
@@ -52,7 +52,7 @@ class ProductController {
 
     delete = async (filter, options) => {
         try {
-            return await service.delete(filter, options);
+            return await service.deleteProduct(filter, options);
         } catch (err) {
             return err.message;
         }

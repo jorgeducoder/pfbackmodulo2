@@ -3,16 +3,19 @@ import { Router } from "express";
 
 import { auth } from './users.router.js';
 
-import { ProductManagerMdb } from "../dao/productManagerMdb.js";
-import { cartManagerMdb } from "../dao/cartManagerMdb.js";
+//import { ProductManagerMdb } from "../dao/productManagerMdb.js";
+
+import ProductController from '../controllers/product.controller.js';
+import CartController from '../controllers/cart.controller.js';
+//import { cartManagerMdb } from "../dao/cartManagerMdb.js";
 
 import productModel from '../dao/models/productModel.js';
 
 
 const router = Router();
 //const products = new ProductManager("./src/saborescaseros.json");
-const products = new ProductManagerMdb();
-const CM = new cartManagerMdb()
+const products = new ProductController();
+const CM = new CartController()
 
 
 router.get("/", async (req, res) => {
@@ -71,11 +74,12 @@ router.get("/", async (req, res) => {
 
 
 // renderizo form y lista de productos actualizada desde socket
-
+// Para proyecto final mod2 cambio llamadas a funciones porque pasamos por el Controller
 
 router.get("/realtimeproducts", async (req, res) => {    // en endpoint products/realtimeproducts muestra form para agregar y lista actualizada
   try {
-    const productList = await products.getProduct();
+    // llamo a products.get porque uso el controller antes llamaba a getProducts del manager
+    const productList = await products.get();
     // renderizo la handlebars definida
     res.render("realTimeProducts",
       {
@@ -96,7 +100,7 @@ router.get("/cart/:cartId", async (req, res) => {
 
   try {
     // Buscar el carrito por su ID
-    const cart = await CM.getcartProducts(cartId);
+    const cart = await CM.getCartProd(cartId);
 
     if (!cart) {
       return res.status(404).json({ message: 'Carrito no encontrado' });

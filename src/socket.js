@@ -3,7 +3,9 @@
 
 //import ProductManager from "./dao/productManager.js";
 // Cambio el import al de la DB y cambio en el views para que realtimeproducts vea los de la base 
-import { ProductManagerMdb } from "./dao/productManagerMdb.js";
+//import { ProductManagerMdb } from "./dao/productManagerMdb.js";
+
+import ProductController from './controllers/product.controller.js';
 
 
 //La sentencia export default (io) => {  exporta 
@@ -11,7 +13,7 @@ import { ProductManagerMdb } from "./dao/productManagerMdb.js";
 
 
 export default (io) => {
-  const productManager = new ProductManagerMdb();
+  const productManager = new ProductController();
   
 
   //  Maneja la conexion y cuando un cliente se conecta al servidor se llama a la funcion handleConnection)
@@ -42,8 +44,9 @@ export default (io) => {
     });
 
     socket.on("delete", async (id) => {
-      console.log("ID del producto a eliminar en socket:", id);
+      
       try {
+        console.log("ID del producto a eliminar en socket:", id);
         await deleteProductAndEmit(id);
       } catch (error) {
         console.error("Error al eliminar el producto:", error);
@@ -56,20 +59,22 @@ export default (io) => {
   }
 
   // Emite los productos a los clientes conectados
-
+// Secambian las funciones de lo manager por la del Controller
 
   async function emitProducts(socket) {
-    const productsList = await productManager.getProduct();
+    //console.log("Estoy para emitir los productos: ", productManager)
+    const productsList = await productManager.get();
     socket.emit("products", productsList);
   }
 
   async function addProductAndEmit(product) {
-    await productManager.addProduct(product);
+    Console.log("Estoy en el add del socket :", product);
+    await productManager.add(product);
     emitProducts(io);
   }
 
   async function deleteProductAndEmit(id) {
-    await productManager.deleteProduct(id);
+    await productManager.delete(id);
     emitProducts(io);
   }
 
