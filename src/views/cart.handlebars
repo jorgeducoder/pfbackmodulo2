@@ -1,0 +1,98 @@
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="stylesheet" href="/css/productIncart.css"> <!-- Asegúrate de que esta ruta apunte a tu archivo CSS -->
+</head>
+
+
+
+<body>
+  <div class="mx-auto px-4">
+    <div>
+      <h1 class="text-uppercase">{{title}}</h1>
+    </div>
+
+    <div class="form-holder">
+      <table class="table-items">
+        <thead>
+          <tr class="text-uppercase">
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Categoria</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+          {{#each products}}
+          <tr>
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.category}}</td>
+            <td>{{this.quantity}}</td>
+            <td>{{this.subtotal}}</td>
+
+            <!-- Botón para eliminar producto del carrito 
+            <td>
+              <form action="/cart/{{cartId}}/remove/{{this.productId._id}}" method="POST">
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+              </form>
+            </td>-->
+
+            <td>
+                <!--<form action="/api/carts/{{cartId}}/productos/{{this.productId}}" method="POST">
+                   <button type="submit" class="btn btn-danger">Eliminar</button>-->
+                    <!--<button class="btn btn-danger delete-btn" data-product-id="{{this.productId}}">Eliminar</button>-->
+                    <button class="btn btn-danger delete-btn" data-product-id="{{this.productId._id}}" data-cart-id="{{cartId}}">Eliminar</button>
+                <!--</form>-->
+            </td>
+
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+      <!-- Total general del carrito -->
+      <h3>Total: {{calcTotal products}}</h3>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.delete-btn').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const productId = button.getAttribute('data-product-id');
+        const cartId = "{{cartId}}"; // Pasar el ID del carrito
+       
+       
+      // Mostrar una alerta con cartId y productId
+        alert(`Cart ID: ${cartId}\nProduct ID: ${productId}`);
+
+        const confirmDelete = confirm('¿Estás seguro de que quieres eliminar este producto?', cartId, productId);
+        if (confirmDelete) {
+          try {
+              const response = await fetch(`/api/carts/${cartId}/productos/${productId}`, {
+              method: 'DEL',
+            });
+            alert("response del fetch: ", response.ok);
+            if (response.ok) {
+                alert('Producto eliminado desde carrito con productos');
+                window.location.reload(); // Recargar la página tras eliminar el producto
+            } else {
+                alert('Error al eliminar el producto');
+            }
+          } catch (error) {
+            console.error('Error al eliminar el producto en carrito con productos:', error);
+          }
+        }
+      });
+    });
+  </script>
+
+
+</body>

@@ -1,0 +1,83 @@
+/* Estilos globales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Contenedor principal */
+  .mx-auto {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .px-4 {
+    padding: 0 16px;
+  }
+  
+  /* Tabla de productos */
+  .table-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .table-items th, 
+  .table-items td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  .table-items th {
+    background-color: #343a40;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+  }
+  
+  .table-items td {
+    font-size: 14px;
+  }
+  
+  .table-items tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .table-items img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+  }
+  
+  /* Estilos para el botón de eliminar */
+  button.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  button.btn-danger:hover {
+    background-color: #c82333;
+  }
+  
+  /* Total del carrito */
+  h3 {
+    text-align: right;
+    color: #28a745;
+    font-size: 22px;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  

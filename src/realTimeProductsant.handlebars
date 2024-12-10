@@ -1,0 +1,138 @@
+
+<!-- HTML del form para dar de alta un nuevo producto y la lista actualizable con los que se dan de alta y con los que se eliminan.
+    Se complementa con realTimeProductsScript.js -->
+
+<body>
+<div class="mx-auto px-4">
+  <div class="mx-auto my-2 text-center border-2 text-uppercase">
+    <h1>Gestor de productos en tiempo real</h1>
+  </div>
+  <div class="form-holder">
+    <div class="form-content">
+      <div class="form-items">
+        <h3>Agregar nuevo producto</h3>
+        <br />
+        <form id="formulario">
+          <div class="col-md-12 col-padding">
+            <label for="title">Nombre</label>
+            <input
+              class="form-control"
+              type="text"
+              id="title"
+              name="title"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 col-padding">
+            <label for="description">Descripción</label>
+            <input
+              class="form-control"
+              type="text"
+              id="description"
+              name="description"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 split col-padding">
+            <label for="category">Categoria</label>
+            <input
+              class="form-control"
+              type="text"
+              id="category"
+              name="category"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 split col-padding">
+            <label for="price">Precio:</label>
+            <input
+              class="form-control"
+              type="number"
+              id="price"
+              name="price"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 split col-padding">
+            <label for="code">Codigo</label><br />
+            <input
+              class="form-control"
+              type="text"
+              id="code"
+              name="code"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 split col-padding">
+            <label for="stock">Stock</label><br />
+            <input
+              class="form-control"
+              type="number"
+              id="stock"
+              name="stock"
+              required=""
+            />
+          </div>
+          <div class="col-md-12 col-padding">
+            <label class="file-label" for="thumbnails">Imagen</label>
+            <input
+              class="form-control"
+              type="file"
+              id="thumbnails"
+              name="thumbnails"
+              onchange="previewImage()"
+            />
+            <div
+              class="position-relative"
+              style="width: fit-content;margin: 0 auto;"
+            >
+              <div id="imagePreview" class="text-center mt-4"></div>
+              <div
+                id="cancelButtonContainer"
+                class="position-absolute top-0 end-0"
+              ></div>
+            </div>
+          </div>
+          <div class="col-md-12 col-padding mt-4" style="text-align: center;">
+            <button
+              class="btn btn-effect btn-dark btn-jif bg-black zoomy"
+              id="addProduct"
+              type="submit">
+              Agregar Producto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h1 class="text-uppercase">Lista de productos en tiempo real</h1>
+  </div>
+  <div class="form-holder">
+    <table class="table-items">
+      <thead>
+        <tr class="text-uppercase">
+          <th>ID</th>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Categoria</th>
+          <th>Stock</th>
+          <th>Código</th>
+          <th>Imagen</th>
+          <th></th>
+         </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+</body>
+<!-- Scripts necesarios El socket.io  instancia su socket antes que el propio. En este caso realTimeProductsScript -->
+<script src="/socket.io/socket.io.js"></script> 
+<script src="/js/realTimeProductsScript.js"></script>
+
+
+
+

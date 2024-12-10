@@ -1,0 +1,96 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Estilos para la tabla */
+.table-items {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-items th, .table-items td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+.table-items th {
+    background-color: #333;
+    color: white;
+}
+
+/* Estilos para las imágenes de productos */
+.table-items img {
+    max-width: 100px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Estilos para las filas alternas de la tabla */
+.table-items tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Estilos para los botones */
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn:hover {
+    background-color: #555;
+}
+
+/* Estilos para los botones de acción */
+.action-btns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.action-btns .btn {
+    margin-right: 10px;
+}
+
+/* Estilos para los botones de estado */
+.status-btn {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-transform: uppercase;
+    cursor: default;
+}
+
+.active {
+    background-color: green;
+    color: white;
+}
+
+.inactive {
+    background-color: red;
+    color: white;
+}
+
+
+

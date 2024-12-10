@@ -1,0 +1,58 @@
+
+/* Estilo base */
+html {
+    background-color: rgb(95, 86, 86);
+    color: white;
+}
+
+/* Formulario */
+form {
+    width: 50%;
+    margin: 0 auto;
+}
+
+/* Grupo de entrada */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+/* Entrada y botón */
+input, button {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 5px 0 10px;
+}
+
+/* Etiqueta */
+label {
+    margin-bottom: 5px;
+}
+
+/* Botón */
+button {
+    background-color: rgb(136, 173, 221);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* Efecto de hover en el botón */
+button:hover {
+    background-color: rgb(59, 100, 235);
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+}
+
+
+
+
+

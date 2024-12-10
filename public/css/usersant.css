@@ -1,0 +1,89 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f9;
+  }
+  
+  .container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  .form label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  .form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  
+  button {
+    background-color: #5a67d8;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #434190;
+  }
+  
+  .social-login p {
+    margin: 15px 0 10px;
+  }
+  
+  .social-button {
+    display: inline-block;
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .github {
+    background-color: #333;
+  }
+  
+  .google {
+    background-color: #DB4437;
+  }
+  
+  .logout-button {
+    color: #fff;
+    background-color: #e53e3e;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+  }
+  
+  .logout-button:hover {
+    background-color: #c53030;
+  }
+  

@@ -1,0 +1,30 @@
+<!-- login.hbs -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/users.css">
+  <title>Inicio de Sesión</title>
+</head>
+<body>
+  <div class="container">
+    <h2>Iniciar Sesión</h2>
+    <form action="/api/users/jwtlogin" method="POST" class="form">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="username" required >
+
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">Ingresar</button>
+    </form>
+    <div class="social-login">
+      <p>O inicia sesión con:</p>
+      <a href="/api/users/ghlogin" class="social-button github">GitHub</a>
+      <a href="/auth/google" class="social-button google">Google</a>
+    </div>
+    <p>¿No tienes cuenta? <a href="/views/register">Regístrate aquí</a></p>
+  </div>
+</body>
+</html>

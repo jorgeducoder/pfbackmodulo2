@@ -1,0 +1,89 @@
+<!-- HTML de la lista de productos. Llamada desde viewsrouter para renderizar los productos por HTTP en el endpoint /products
+    Ejemplo para mostrar una lista por HTTP con HTML -->
+
+<body>
+  <div class="mx-auto px-4">
+    <div>
+      <h1 class="text-uppercase">Lista de productos en http</h1>
+    </div>
+
+    <div class="form-holder">
+      <table class="table-items">
+        <thead>
+          <tr class="text-uppercase">
+            <!--<th>ID</th>-->
+            <th>Título</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Categoria</th>
+            <th>Estado</th>
+            <th>Stock</th>
+            <th>Código</th>
+            <th>Imagen</th>
+            <th></th>
+
+          </tr>
+        </thead>
+
+        <tbody id="table-body">
+          {{#each productList}}
+          <tr>
+            <!--<td>{{this._id}}</td>-->
+            <td>{{this.title}}</td>
+            <td>{{this.description}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.category}}</td>
+            <td>{{#if status}} Activo {{else}} Inactivo {{/if}}</td>
+            <td>{{this.stock}}</td>
+            <td>{{this.code}}</td>
+
+            <td>
+              {{#if this.thumbnails.length}}
+              <img src="{{this.thumbnails}}" alt="Imagen del producto">
+              {{else}}
+              Sin imagen
+              {{/if}}
+              <!--<img src="{{this.thumbnails}}" alt="Imagen del producto">-->
+            </td>
+
+            <td>
+            <!-- Botón para agregar al carrito -->
+            <form action="/api/carts/productos/{{this._id}}" method="POST">
+              <button type="submit" class="btn btn-success">Agregar al carrito</button>
+            </form>
+            </td>
+
+          </tr>
+          {{/each}}
+        </tbody>
+
+      </table>
+
+    </div>
+    
+
+    <!--Botones de paginación -->
+    <div class="pagination-buttons">
+      {{#if hasPrevPage}}
+        <a href="/products?page={{prevPage}}&limit={{limit}}&sort={{sort}}" class="btn btn-primary">Página anterior</a>
+      {{else}}
+        <button class="btn btn-primary" disabled>Página anterior</button>
+      {{/if}}
+
+      {{#if hasNextPage}}
+        <a href="/products?page={{nextPage}}&limit={{limit}}&sort={{sort}}" class="btn btn-primary">Página siguiente</a>
+      {{else}}
+        <button class="btn btn-primary" disabled>Página siguiente</button>
+      {{/if}}
+    </div>
+
+<!-- Barra de paginación con pagination.js no funciona
+    <div class="pagination-container">
+      <button id="prev-page" {{#unless hasPrevPage}}disabled{{/unless}}>Anterior</button>
+      <span id="current-page-info">Página {{page}} de {{totalPages}}</span>
+      <button id="next-page" {{#unless hasNextPage}}disabled{{/unless}}>Siguiente</button>
+    </div>
+  </div>
+ <script src="/js/pagination.js"></script>-->
+</body>
+
