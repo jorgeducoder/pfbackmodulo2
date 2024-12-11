@@ -92,8 +92,8 @@ app.use("/api/carts", cartsRouter); // idem que anterior
 app.use("/products", viewsRouter); // endpoint donde se muestra vista de /products  y /products/realtimeproducts productos en tiempo real
 
 
-app.use('/views', viewsRouter);
-app.use('/api/users', usersRouter);
+app.use('/views', viewsRouter); // endpoint donde se registra o se logea un usuario con distintas estrategias, session, jwt, pp
+app.use('/api/users', usersRouter); // endpoint para mostrar usuarios ingresados
 
 //app.use('/static', express.static(`${config.DIRNAME}/public`));  ya estaria mas arriba
 

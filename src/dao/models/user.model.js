@@ -12,7 +12,7 @@ const schema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     age: { type: Number, required: false },
     password: { type: String, required: true },
-    cart: { type:mongoose.Schema.Types.ObjectId, required: true, ref: "carts"},
+    cart: { type:mongoose.Schema.Types.ObjectId, required: false, ref: "carts"},
     role: { type: String, enum: ["ADMIN", "PREMIUM", "USER"], default: "USER" }  // deberia ser requerido y debe ser enumerado con 3 roles
 });
 

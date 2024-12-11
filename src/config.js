@@ -9,6 +9,7 @@ const config = {
     get UPLOAD_DIR() { return `${this.DIRNAME}/public/uploads` },
    // MONGODB_URI: 'mongodb://127.0.0.1:27017/coder70190',
     // MONGODB_URI: 'mongodb+srv://coder70190:coder2024@cluster0.4qaobt3.mongodb.net/coder70190',
+    MONGODB_URI: 'mongodb+srv://jeduclosson:HoIOatEgfADTFsA6@cluster0.ngvrtai.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0',
     SECRET: 'coder70190secret',  // mo tiene que ver con GH
     GITHUB_CLIENT_ID: 'Iv23liFB7EMCED1OFwwG',
     GITHUB_CLIENT_SECRET: '60c2d59d972f98b123246cab80cadd8a34caf9bf',

@@ -4,14 +4,13 @@ import GitHubStrategy from 'passport-github2';
 import userManager from '../controllers/user.controller.js';
 
 import config from '../config.js';
-import cartManager from '../controllers/user.controller.js';
+import cartManager from '../controllers/cart.controller.js';
 
 //import { cartManagerMdb } from '../dao/cartManagerMdb.js';
 
 const cartmanager = new cartManager();
-
-
 const manager = new userManager();
+
 const localStrategy = local.Strategy;
 
 const initAuthStrategies = () => {
@@ -52,16 +51,17 @@ const initAuthStrategies = () => {
                 // ha sido correcta, tendremos un profile disponible
                 console.log("Este es el profile de gh a pp: ", profile._json?.email);
                 const email = profile._json?.email || null;
-                
+                console.log("Este es el email :", email);
                 // Necesitamos que en el profile haya un email
                 // Más adelante agregaremos un control alternativo en caso
                 // que el profile llegado desde Github no contenga ningún email usable
                 if (email) {
+                    
                     // Tratamos de ubicar en NUESTRA base de datos un usuario
                     // con ese email, si no está lo creamos y lo devolvemos,
                     // si ya existe retornamos directamente esos datos
                     const foundUser = await manager.getOne({ email: email });
-
+                    
                     if (!foundUser) {
                         
                         const emptyCart = await cartmanager.add({}); // crea un carrito vacío tmbn para GH

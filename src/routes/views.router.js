@@ -152,6 +152,7 @@ router.get("/cart/:cartId", async (req, res) => {
 // router para registrarse como usuario o github o google o ingresar si ya esta registrado
 router.get('/register', (req, res) => {
   const data = {};
+  console.log("Entro al views router a renderizar");
   res.status(200).render('register', data);
 });
 

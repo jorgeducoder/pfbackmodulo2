@@ -11,13 +11,14 @@
 // Ver difeencias con users.manager.js en preentrega
 
 import userModel from '../dao/models/user.model.js';
-
+import MongoSingleton from './mongo.singleton.js';
 
 class UserService {
     constructor() {}
 
     get = async (filter) => {
         try {
+            await MongoSingleton.getInstance(); //Lo anulo porque si valido con gh y pp se corta la conexion, lo habilito para jwt
             if (filter) return await userModel.findOne(filter).lean();
             return await userModel.find().lean();
         } catch (err) {
@@ -84,12 +85,12 @@ class UserService {
                 
                 // Crea un carrito vacío y guarda su ID en el usuario
                 
-                const emptyCart = await cartmanager.addCart({}); // crea un carrito vacío visto en after
-                
-                data.cart = emptyCart._id; // asigna el ID del carrito al campo `cart`
-                                
-                data.password = createHash(data.password);
-                
+               // const emptyCart = await cartmanager.addCart({}); // crea un carrito vacío visto en after
+               // Por ahora lo anulo porque cuando se selecciona un producto ya se crea un carrito 
+                //data.cart = emptyCart._id; // asigna el ID del carrito al campo `cart`
+                const normalizedData = new UserDTO(data);               
+                //data.password = createHash(data.password);
+                normalizedData.password = createHash(data.password);
                 return await this.add(data);
             } else {
                 console.log("Se fue por el null de user!!");

@@ -13,7 +13,7 @@
 
 import UserService from '../dao/user.service.mongo.js';
 import { createHash, isValidPassword } from '../utils.js';
-
+import UserDTO from '../dao/users.dto.js';
 
 const service = new UserService();
 
@@ -30,6 +30,7 @@ class UserController {
     }
 
     getOne = async (filter) => {
+        
         try {
             return await service.get(filter);
         } catch (err) {
@@ -39,7 +40,19 @@ class UserController {
 
     add = async (data) => {
         try {
-            return await service.add(data);
+            /**
+             * Un DTO (Data Transfer Object), es un servicio
+             * intermedio encargado de la normalización de datos.
+             * 
+             * Antes de entregar el objeto al método add del DAO,
+             * pasamos por una instancia del DTO que se encarga
+             * de normalizar lo necesario (por ejemplo pasar un apellido a mayúsculas),
+             * un email a minúsculas, etc.
+             */
+            
+            const normalizedData = new UserDTO(data);
+            return await service.add(normalizedData);
+            
         } catch (err) {
             return err.message;
         }
@@ -81,11 +94,13 @@ class UserController {
     register = async (data) => {
         try {
             const filter = { email: data.username };
-            const user = await service.getOne(filter);
+            const user = await service.get(filter);
 
             if (user === null) {
-                data.password = createHash(data.password);
+                //data.password = createHash(data.password); ya lo hace el service
+                //const normalizedData = new UserDTO(data);
                 return await service.add(data);
+                //return await service.add(normalizedData);
             } else {
                 return null;
             }

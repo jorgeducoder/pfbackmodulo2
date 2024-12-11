@@ -37,7 +37,7 @@ En el mismo endpoint si se inicia sesion con Github va al endpoint api/users/ghl
 
 En el endpoint http://localhost:8080/views/jwtlogin si se inicia sesion con email y password manual, y se valida con JWT devuelve el token.
 
-En el endpoint viwes/jwtlogin si se inicia sesion con GiHub, valida con passport y va a views/profile para renderizar el usuario logeado.
+En el endpoint http://localhost:8080/viwes/jwtlogin si se inicia sesion con GiHub, valida con passport y va a views/profile para renderizar el usuario logeado.
 
 NO se utilizan:
 

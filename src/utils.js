@@ -62,6 +62,28 @@ export const verifyToken = (req, res, next) => {
     
 };
 
+import nodemailer from 'nodemailer';
+
+// Configuración del transporte de Nodemailer
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // u otro
+    auth: {
+        user: 'jeduclosson@gmail.com', // 
+        pass: '24877092'      // 
+    }
+});
+
+// Función para enviar correos electrónicos
+export const enviarCorreo = (destinatario, asunto, mensaje) => {
+    return transporter.sendMail({
+        from: 'jedhermida@gmail.com', // Cambia esto por tu email
+        to: destinatario,
+        subject: asunto,
+        html: mensaje
+    });
+};
+
+
 
 
 

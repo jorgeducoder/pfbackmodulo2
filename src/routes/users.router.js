@@ -3,11 +3,11 @@ import passport from 'passport';
 
 // sustituyo el uploader a como se utiliza para products, desde el middlewares
 //import { uploader } from '../uploader.js';
-import { uploader } from "../middlewares/multer.js";
+//import { uploader } from "../middlewares/multer.js";
 import UserController from '../controllers/user.controller.js';
 import initAuthStrategies from '../auth/passport.config.js';
 import { createToken, verifyToken } from '../utils.js';
-
+import { enviarCorreo } from '../utils.js';
 
 const router = Router();
 const manager = new UserController();
@@ -30,49 +30,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// router.post('/', auth, uploader.array('thumbnail', 3), (req, res) => { // gestión de múltiples archivos
-router.post('/', auth, uploader.single('thumbnail'), async (req, res) => { // gestión de archivo único
-    try {
-        const { name, age, email } = req.body;
 
-        if (name != '' && age != '' && email != '') {
-            const data = { name: name, age: +age, email: email };
-            const process = await manager.add(data);
-            res.status(200).send({ error: null, data: process });
-        } else {
-            res.status(400).send({ error: 'Faltan campos obligatorios', data: [] });
-        }
-    } catch (err) {
-        res.status(500).send({ error: 'Error interno de ejecución del servidor', data: [] });
-    }
-});
-
-router.patch('/:id?', auth, async (req, res) => {
-    try {
-        const id = req.params.id;
-        
-        if (!id) {
-            res.status(400).send({ error: 'Se requiere parámetro id', data: null });
-        } else {
-            const { name, age, email } = req.body;
-            const filter = { _id: id };
-            const update = {};
-            if (name) update.name = name;
-            if (age) update.age = +age;
-            if (email) update.email = email;
-            const options = { new: true }; // new: true retorna el documento actualizado
-            
-            const process = await manager.update(filter, update, options);
-            if (!process) {
-                res.status(404).send({ error: 'No se encuentra el usuario', data: [] });
-            } else {
-                res.status(200).send({ error: null, data: process });
-            }
-        }
-    } catch (err) {
-        res.status(500).send({ error: 'Error interno de ejecución del servidor', data: [] });
-    }
-});
 
 router.delete('/:id?', auth, async (req, res) => {
     try {
@@ -100,12 +58,25 @@ router.delete('/:id?', auth, async (req, res) => {
 
 router.post('/register', async (req, res) => {
     const { firstname, lastname, username, password } = req.body;
-    console.log("usuario en register: ", username);
+    
     if (firstname != '' && lastname != '' && username != '' && password != '') {
+        console.log("usuario en register: ", username);
         const process = await manager.register({ firstName: firstname, lastName: lastname, email: username, password: password });
 
         if (process) { 
-            res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
+            console.log(" Paso el if :", process)
+            //res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
+            
+            const mensaje = `
+                <h1>¡Bienvenido, ${firstname}!</h1>
+                <p>Gracias por registrarte en nuestra plataforma.</p>
+               `;
+
+             await enviarCorreo(username, 'Bienvenido a Nuestra Plataforma', mensaje);
+
+            res.status(201).send('Usuario registrado y correo enviado');
+            res.redirect("/products");
+
         } else {
             res.status(401).send({ error: 'Ya existe un usuario con ese email', data: [] });
         }
@@ -164,15 +135,23 @@ router.get('/githubcallback', passport.authenticate('ghlogin', { failureRedirect
 });
 
 // Login manual contra nuestra base de datos, utilizando tokens (JWT = JSON Web Tokens)
+
 router.post('/jwtlogin', async (req, res) => {
     const { username, password } = req.body;
-    console.log("Login manual jwt: ", username, password);
+    
     if (username != '' && password != '') {
         const process = await manager.authenticate(username, password);
+        console.log("Login manual jwt: ", username, password);
         if (process) {
             const payload = { username: username, admin: true };
             const token = createToken(payload, '1h');
-            res.status(200).send({ error: null, data: { autentication: 'ok', token: token } });
+            
+            //res.status(200).send({ error: null, data: { autentication: 'ok', token: token } });
+            
+            // Aqui redirijo a la lista de productos 
+            console.log("Datos de la sesion manual con JWT: ", req.session, payload);           
+            res.redirect('/products');
+            
            
         } else {
             res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });
