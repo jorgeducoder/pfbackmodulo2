@@ -48,7 +48,7 @@ export const verifyToken = (req, res, next) => {
     const cookieToken = req.cookies && req.cookies[`${config.APP_NAME}_cookie`] ? req.cookies[`${config.APP_NAME}_cookie`] : undefined;
     const queryToken = req.query.access_token ? req.query.access_token : undefined;
     const receivedToken = headerToken || cookieToken || queryToken;
-    
+    console.log("Token recibido en verifyToken :", receivedToken);
    
     
     if (!receivedToken) return res.status(401).send({ error: 'Se requiere token', data: [] });
@@ -57,6 +57,7 @@ export const verifyToken = (req, res, next) => {
         if (err) return res.status(403).send({ error: 'Token no válido', data: [] });
         
         req.user = payload;
+        console.log("Token recibido :", req.user);
         next();
     });
     
@@ -69,7 +70,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail', // u otro
     auth: {
         user: 'jeduclosson@gmail.com', // 
-        pass: '24877092'      // 
+        pass: 'ipnm gcpf tltv euel'      // 
     }
 });
 

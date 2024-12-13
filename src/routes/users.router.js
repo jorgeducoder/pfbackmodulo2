@@ -14,10 +14,13 @@ const manager = new UserController();
 initAuthStrategies();
 
 export const auth = (req, res, next) => {
-    if ((req.session?.userData && req.session?.userData.admin) || req.session?.passport.user) {
-        next();
+    //if ((req.session?.userData && req.session?.userData.admin) || req.session?.passport.user) {
+        //if (req.session?.userData && req.session?.userData.admin)  {
+        if (req.session?.passport.user)  { 
+            console.log("Entre a auth :", req.session)
+          next();
     } else {
-        res.status(401).send({ error: 'No autorizado', data: [] });
+        res.status(401).send({ error: 'No autorizadoen auth', data: [] });
     }
 }
 
@@ -64,7 +67,7 @@ router.post('/register', async (req, res) => {
         const process = await manager.register({ firstName: firstname, lastName: lastname, email: username, password: password });
 
         if (process) { 
-            console.log(" Paso el if :", process)
+            console.log(" Paso el if en register del user.router :", process)
             //res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
             
             const mensaje = `
@@ -73,9 +76,9 @@ router.post('/register', async (req, res) => {
                `;
 
              await enviarCorreo(username, 'Bienvenido a Nuestra Plataforma', mensaje);
-
-            res.status(201).send('Usuario registrado y correo enviado');
-            res.redirect("/products");
+            
+             res.redirect('/views/profile');
+             //res.redirect("/products");
 
         } else {
             res.status(401).send({ error: 'Ya existe un usuario con ese email', data: [] });
@@ -85,40 +88,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login manual contra nuestra base de datos, utilizando sessions. NO SE UTILIZA
-
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    console.log("Login manual: ", username, password);
-    if (username != '' && password != '') {
-        const process = await manager.authenticate(username, password);
-        if (process) {
-            req.session.userData = { firstName: process.firstName, lastName: process.lastName, email: process.email, admin: true };
-
-            req.session.save(err => {
-                if (err) return res.status(500).send({ error: 'Error al almacenar datos de sesión', data: [] });
-
-                // res.status(200).send({ error: null, data: 'Usuario autenticado, sesión iniciada!' });
-                res.redirect('/views/profile');
-            });
-        } else {
-            res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });
-        }
-    } else {
-        res.status(400).send({ error: 'Faltan campos: obligatorios username, password', data: [] });
-    }
-});
-
-// Login con passport, utilizando sessions. NO SE UTILIZA
-
-router.post('/pplogin', passport.authenticate('login', { failureRedirect: '/views/login' }), async (req, res) => {
-    req.session.save(err => {
-        if (err) return res.status(500).send({ error: 'Error al almacenar datos de sesión', data: [] });
-
-        // res.status(200).send({ error: null, data: 'Usuario autenticado, sesión iniciada!' });
-        res.redirect('/views/profile');
-    });
-});
 
 // Login con passport, a través de proveedor externo (Github)
 // Habilitamos 2 endpoints pq uno redirecciona al proveedor (ghlogin) y el otro vuelve con el resultado (githubcallback)
@@ -129,8 +98,9 @@ router.get('/githubcallback', passport.authenticate('ghlogin', { failureRedirect
         if (err) return res.status(500).send({ error: 'Error al almacenar datos de sesión', data: [] });
 
         // res.status(200).send({ error: null, data: 'Usuario autenticado, sesión iniciada!' });
-       console.log("Datos de la sesion GH: ", req.session);
-        res.redirect('/views/profile');
+       console.log("Datos de la sesion en ghlogin: ", req.session);
+        res.redirect('/products/realtimeproducts');
+        //res.redirect('/profile');
     });
 });
 

@@ -75,23 +75,33 @@ router.get("/", async (req, res) => {
 
 // renderizo form y lista de productos actualizada desde socket
 // Para proyecto final mod2 cambio llamadas a funciones porque pasamos por el Controller
+// en endpoint products/realtimeproducts muestra form para agregar y lista actualizada
 
-router.get("/realtimeproducts", async (req, res) => {    // en endpoint products/realtimeproducts muestra form para agregar y lista actualizada
+router.get("/realtimeproducts", auth, async (req, res) => {    
   try {
-    // llamo a products.get porque uso el controller antes llamaba a getProducts del manager
-    const productList = await products.get();
-    // renderizo la handlebars definida
-    res.render("realTimeProducts",
-      {
-        title: "Real Time Products",
-        style: "realtimeproducts.css",
-        productList
+      // Verificar si el usuario tiene rol de ADMIN
+      if (req.session.passport.user.role === "ADMIN") {
+          // Llamo al método products.get porque uso el controller
+          const productList = await products.get();
+          
+          // Renderizo la plantilla Handlebars definida
+          res.render("realTimeProducts", {
+              title: "Real Time Products",
+              style: "realtimeproducts.css",
+              productList
+          });
+      } else {
+          // Si el usuario no es ADMIN
+          res.status(401).send({ error: 'Usuario no es Admin RTP', data: [] });
       }
-    );
   } catch (error) {
-    res.status(500).send(error.message);
+      // Manejo de errores
+      res.status(500).send(error.message);
   }
 });
+
+
+
 
 // Ruta para obtener los productos de un carrito
 
@@ -173,9 +183,9 @@ router.get('/jwtlogin', (req, res) => {
 
 router.get('/profile', auth, (req, res) => {
     
-  //const data = req.session.userData;  jwt y sesion, con jwt no se muestra profile, se muestra token
-  // Si uso session los datos del usuario tendrian que estar en user y no en userData para usar dos cons data = .....
-  const data = req.session.passport.user;
+  //const data = req.session.userData;  //jwt y sesion, no muestro profile voy a /products
+  // Si uso session los datos del usuario tendrian que estar en user y si uso GH  en userData 
+  const data = req.session.passport.user; // Si inicio sesion con GH valido con passport
   console.log(" El usuario en profile: ", data);
   res.status(200).render('profile', data);
 });
