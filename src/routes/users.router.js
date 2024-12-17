@@ -98,9 +98,18 @@ router.get('/githubcallback', passport.authenticate('ghlogin', { failureRedirect
 
         // res.status(200).send({ error: null, data: 'Usuario autenticado, sesión iniciada!' });
        console.log("Datos de la sesion en ghlogin: ", req.session);
-              
+       const isAdmin = req.session?.passport?.user?.role === "ADMIN";
+       const isUser = req.session?.passport?.user?.role === "USER";      
        //res.redirect('/products/realtimeproducts');
-        res.redirect('/products');
+       if (isAdmin) {
+            res.redirect('/products/realtimeproducts');
+       } else {
+              if (isUser) {
+                 res.redirect('/products');
+              } else {
+                res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });
+              }
+            } 
     });
 });
 
@@ -124,8 +133,18 @@ router.post('/jwtlogin', async (req, res) => {
             console.log("En user.router antes redirect process y token: ", process, token);
            // res.status(200).send({ error: null, data: { autentication: 'ok', token: token } });
            // res.redirect("/products");
-           res.redirect(`/products?access_token=${token}`); // mas seguro seria usar una cookie
-
+           const isAdminjwt = payload.role === "ADMIN";
+           const isUserjwt = payload.role === "USER"
+           
+           if (isUserjwt) {
+                res.redirect(`/products?access_token=${token}`); // mas seguro seria usar una cookie
+           } else {
+                if (isAdminjwt) {
+                    res.redirect(`/products/realtimeproducts?access_token=${token}`); 
+                } else {
+                    res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });     
+                }
+           }
 
         } else {
             res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });

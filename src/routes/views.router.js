@@ -22,6 +22,7 @@ const CM = new CartController()
 router.get("/", verifyToken, async (req, res) => {
   const { limit, page, sort, search, category } = req.query;
 
+  // En verifyToken pregunta si la sesion viene por passport, y si no hace la verificacion del token de JWT
   // Crear el filtro de búsqueda en función del parámetro "search" y "category"
   
   
@@ -95,7 +96,7 @@ router.get("/", verifyToken, async (req, res) => {
 // Para proyecto final mod2 cambio llamadas a funciones porque pasamos por el Controller
 // en endpoint products/realtimeproducts muestra form para agregar y lista actualizada
 
-router.get("/realtimeproducts", async (req, res) => {    
+/*router.get("/realtimeproducts", async (req, res) => {    
   // Utilizo GH variando permisos entre USER y ADMIN para trabajar con unico metodo de autenticacion
   try {
       // Verificar si el usuario tiene rol de ADMIN
@@ -117,9 +118,38 @@ router.get("/realtimeproducts", async (req, res) => {
       // Manejo de errores
       res.status(500).send(error.message);
   }
+});*/
+
+// Con cambios para validar role de admin
+
+router.get("/realtimeproducts", verifyToken, async (req, res) => {    
+  
+  try {
+      // Verificar si el usuario tiene rol de ADMIN
+      // Validar inicio de sesión con GitHub o JWT
+      const isGitHubLogin = req.session?.passport?.user?.role === "ADMIN";
+      const isJWTLogin = req.user?.role === "ADMIN"; // req.user proviene del middleware verifyToken
+      console.log("En views.router RTP rol de token:", req.user?.role)
+      
+      if (isGitHubLogin || isJWTLogin) {
+          // Llamo al método products.get porque uso el controller
+          const productList = await products.get();
+          
+          // Renderizo la plantilla Handlebars definida
+          res.render("realTimeProducts", {
+              title: "Real Time Products",
+              style: "realtimeproducts.css",
+              productList
+          });
+      } else {
+          // Si el usuario no es ADMIN
+          res.status(401).send({ error: 'Usuario no es Admin RTP', data: [] });
+      }
+  } catch (error) {
+      // Manejo de errores
+      res.status(500).send(error.message);
+  }
 });
-
-
 
 
 // Ruta para obtener los productos de un carrito

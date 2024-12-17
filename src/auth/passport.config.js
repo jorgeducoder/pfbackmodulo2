@@ -5,7 +5,7 @@ import userManager from '../controllers/user.controller.js';
 
 import config from '../config.js';
 import cartManager from '../controllers/cart.controller.js';
-
+import { enviarCorreo } from '../utils.js';
 //import { cartManagerMdb } from '../dao/cartManagerMdb.js';
 
 const cartmanager = new cartManager();
@@ -77,8 +77,18 @@ const initAuthStrategies = () => {
                         const process = await manager.add(user);
 
                         // Aqui if process enviar mail de registrado
-
-                        return done(null, process);
+                        console.log("En passport.config process dsps add: ", process);
+                        if (process) {
+                            const mensajegh = `
+                                            <h1>¡Bienvenido, ${process.firstName}!</h1>
+                                            <p>Gracias por registrarte desde GitHub en nuestra plataforma.</p>
+                                           `;
+                            
+                                            await enviarCorreo(process.email, 'Bienvenido a Nuestra Plataforma', mensajegh);
+                        
+                                        
+                                        return done(null, process)};
+                                                        
                     } else {
                         return done(null, foundUser);
                     }

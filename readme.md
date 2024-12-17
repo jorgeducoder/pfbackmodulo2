@@ -53,11 +53,21 @@ PROYECTO FINAL:
 Se incluye el modelo MVC (Models, Views, Controllers aislando la capa de acceso a datos de los manager para trabajar con cualquier base de datos).
 Los manager se pasan a llamar user.service.mongo y los Controllers user.controller.js que llaman a las funciones para el CRUD.
 
-Se incluye DTO y envio de mail al registrarse un usuario con nodemailer. En este endpoint al agregar un producto al carrito se crea el carrito con el producto.
+Si el usuario se registra manual (estrategia con passport passport.config.js) o con github (estrategia con JWT) es un USER y se redirige a /products para ingresar productos al carrito vacio.
 
-Si un usuario se registra manual se redirige al endpoint /products
+Se incluye DTO y envio de mail al registrarse un usuario con nodemailer en ambas estrategias de autenticacion. 
 
-Si se registra con github se agrego auth en el endpoint realtimeproducts para verificar que sea ADMIN, si no lo es no permite ingresar al endpoint.
+En ambas estrategias cuando el usuario hace login, si el usuario es USER se redirige al endpoint /products.
+
+Si el usuario es ADMIN se redirige al endpoint /products/realtimeproducts
+
+
 
 Errores que no crashean la aplicacion:
+
+Cuando se registra un usuario o cuando hace login, se corta la conexion al servidor al ir al endpoint, pero si se reintenta ingresa al endpoint. Esto sucede con cualquier tipo de registro y login.
+
+Se comenta mongo.singleton porque no lista productos en  /productos y /realtimeproducts, probablemente con problemas en el paginate.
+
+Se deja conexion a mongodb en app.js porque si se elimina da problemas al cargar los datos en /products.
 
