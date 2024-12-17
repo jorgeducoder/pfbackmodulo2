@@ -44,6 +44,13 @@ export const createToken = (payload, duration) => jwt.sign(payload, config.SECRE
  * y la agrega al objeto req (req.user) para que pueda ser usada en distintos endpoints
  */
 export const verifyToken = (req, res, next) => {
+    
+    // Verificar sesión activa con GitHub
+    if (req.session?.passport?.user) {
+        console.log("Autenticado con GitHub:", req.session.passport.user);
+        return next(); // Permitir la solicitud
+    };
+    
     const headerToken = req.headers.authorization ? req.headers.authorization.split(' ')[1] : undefined;
     const cookieToken = req.cookies && req.cookies[`${config.APP_NAME}_cookie`] ? req.cookies[`${config.APP_NAME}_cookie`] : undefined;
     const queryToken = req.query.access_token ? req.query.access_token : undefined;

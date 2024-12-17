@@ -36,7 +36,7 @@ const app = express();
 
 const fileStorage = FileStore(session); // para usuarios con session
 
-// MongoDB connect
+// MongoDB connect pongo comentarios porque se conecta desde Mongo Singleton pero lo saco porque no renderiza los productos
 
 //Antes del ? donde empiezan los query params se pone el nombre de la BD a la que quiero acceder que es ecommerce
 const uri = "mongodb+srv://jeduclosson:HoIOatEgfADTFsA6@cluster0.ngvrtai.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=Cluster0";

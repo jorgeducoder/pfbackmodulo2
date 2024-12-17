@@ -50,8 +50,9 @@ class UserController {
              * un email a minúsculas, etc.
              */
             
-            const normalizedData = new UserDTO(data);
-            return await service.add(normalizedData);
+            //const normalizedData = new UserDTO(data);
+            console.log("En add de controller: ", data);
+            return await service.add(data);
             
         } catch (err) {
             return err.message;
@@ -77,11 +78,12 @@ class UserController {
     authenticate = async (user, pass) => {
         try {
             const filter = { email: user };
-            const foundUser = await service.getOne(filter);
-
+            const foundUser = await service.get(filter);
+            console.log("En authenticate de user.controller :", foundUser)
+            console.log("Authenticate 1: ", pass, foundUser.password);
             if (foundUser && isValidPassword(pass, foundUser.password)) {
                 const { password, ...filteredUser } = foundUser;
-
+                console.log("Authenticate2: ", filteredUser);
                 return filteredUser;
             } else {
                 return null;
@@ -97,10 +99,19 @@ class UserController {
             const user = await service.get(filter);
 
             if (user === null) {
-                //data.password = createHash(data.password); ya lo hace el service
-                //const normalizedData = new UserDTO(data);
+                // Cuando el email no esta registrado en validacion con GH se crea el usuario y un carrito vacio.
+                
+                // Creo Hash y Normalizo los datos
+                data.password = createHash(data.password);
+                const userDTO = new UserDTO(data, data.password);
+                
+                //const normalizedData = new UserDTO(data);               
+                
+                console.log ("En user.controller: ", userDTO, data)
+                 
                 return await service.add(data);
-                //return await service.add(normalizedData);
+                //return await service.add(userDTO); // si lo paso asi me daba error en Process del router ????
+
             } else {
                 return null;
             }

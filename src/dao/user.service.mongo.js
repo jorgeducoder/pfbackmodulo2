@@ -52,6 +52,7 @@ class UserService {
         }
     }
 
+    /* Anulo los dos porque estan en el Controller
     authenticate = async (user, pass) => {
         try {
             // Ya no autenticamos de forma directa con findOne,
@@ -83,15 +84,21 @@ class UserService {
             // entonces continuamos con el proceso de registro
             if (user === null) {
                 
-                // Crea un carrito vacío y guarda su ID en el usuario
+                /* Crea un carrito vacío y guarda su ID en el usuario
                 
                // const emptyCart = await cartmanager.addCart({}); // crea un carrito vacío visto en after
                // Por ahora lo anulo porque cuando se selecciona un producto ya se crea un carrito 
-                //data.cart = emptyCart._id; // asigna el ID del carrito al campo `cart`
-                const normalizedData = new UserDTO(data);               
-                //data.password = createHash(data.password);
-                normalizedData.password = createHash(data.password);
+                //data.cart = emptyCart._id; // asigna el ID del carrito al campo `cart`*/
+                
+                /*const normalizedData = new UserDTO(data);               
+                console.log ("En user.service: ", normalizedData, data)
+               
+                /*data.password = createHash(data.password);*/
+               
+                /*normalizedData.password = createHash(data.password);
                 return await this.add(data);
+
+                console.log("Data que agrego: ", data)
             } else {
                 console.log("Se fue por el null de user!!");
                 return null;
@@ -99,7 +106,7 @@ class UserService {
         } catch (err) {
             return err.message;
         }
-    }
+    }*/
 }
 
 

@@ -11,7 +11,7 @@ import CartController from '../controllers/cart.controller.js';
 
 import productModel from '../dao/models/productModel.js';
 
-import { verifyToken } from "../utils.js"; // Middleware que valida el token
+//import { verifyToken } from "../utils.js"; // Middleware que valida el token
 
 const router = Router();
 //const products = new ProductManager("./src/saborescaseros.json");
@@ -19,11 +19,11 @@ const products = new ProductController();
 const CM = new CartController()
 
 
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
   const { limit, page, sort, search, category } = req.query;
 
   // Crear el filtro de búsqueda en función del parámetro "search" y "category"
-  
+  console.log("En views.router session antes render: ",  req.session.cookie.expires);
   
   let query = {};
 
@@ -57,16 +57,20 @@ router.get("/", verifyToken, async (req, res) => {
     /* Ejecutar la consulta de paginación y
      Renderizar la vista Handlebars con los datos paginados*/
 
-    // Validar inicio de sesión con GitHub o JWT
-    const isGitHubLogin = req.session?.passport?.user?.role === "USER";
-    const isJWTLogin = req.user?.role === "USER"; // req.user proviene del middleware verifyToken
-    console.log("En views.router rol de token:", req.user?.role)
+    //Falta agregar control de usuario cuando ingresa por jwtlogin
+    // Verificar si el usuario tiene sesión y si cumple los roles adecuados
+    const isUserLoggedInWithGitHub = req.session?.passport?.user?.role === "USER";
+    const isSessionActive = req.session?.cookie?.expires;
+    //if ((req.session.passport.user.role === "USER") || (!req.session.cookie.expires)) da error porque cuando es por gh user esta indefinida
+    
 
-    if (isGitHubLogin || isJWTLogin) {
+
+
+    if (isUserLoggedInWithGitHub || !isSessionActive) {
         
-        
+        console.log("En views.router llego a la paginacion: ", query, options);
         const productList = await productModel.paginate(query, options);
-       
+        //console.log("En views.router salgo de la  paginacion: ", productList);
         
         res.render("home", {
         title: "Productos desde HTML",
@@ -81,11 +85,12 @@ router.get("/", verifyToken, async (req, res) => {
         });
     } else {
     // Si el usuario no es ADMIN
-    res.status(401).send({ error: "Usuario no autenticado o no tiene el rol adecuado", data: [] });
+        res.status(401).send({ error: 'Usuario no es USER', data: [] });
     };
   } catch (error) {
     
     console.error("Error en views.router:", error);
+
     res.status(500).send({ error: 'Error al obtener productos' });
   }
 });

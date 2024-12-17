@@ -8,10 +8,11 @@
  */
 
 class UserDTO {
-    constructor(data) {
+    constructor(data, hashedPassword) {
         this.firstName = data.firstName?.trim();
         this.lastName = data.lastName?.trim().toUpperCase();
         this.email = data.email?.toLowerCase().trim();
+        this.Password = hashedPassword;
     }
 }
 

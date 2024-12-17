@@ -14,10 +14,11 @@ const manager = new UserController();
 initAuthStrategies();
 
 export const auth = (req, res, next) => {
-    //if ((req.session?.userData && req.session?.userData.admin) || req.session?.passport.user) {
+    console.log("Entre en views.router a auth1 :", req.session)
+    if ((req.session?.userData && req.session?.userData.admin) || req.session?.passport.user) {
         //if (req.session?.userData && req.session?.userData.admin)  {
-        if (req.session?.passport.user)  { 
-            console.log("Entre a auth :", req.session)
+        //if (req.session?.passport.user)  { 
+            console.log("Entre en views.router aauth2 :", req.session)
           next();
     } else {
         res.status(401).send({ error: 'No autorizadoen auth', data: [] });
@@ -63,23 +64,21 @@ router.post('/register', async (req, res) => {
     const { firstname, lastname, username, password } = req.body;
     
     if (firstname != '' && lastname != '' && username != '' && password != '') {
-        console.log("usuario en register: ", username);
+        console.log("users.router usuario en register: ", username, password);
         const process = await manager.register({ firstName: firstname, lastName: lastname, email: username, password: password });
 
         if (process) { 
-            console.log(" Paso el if en register del user.router :", process)
-            //res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
+           console.log(" Paso el if en register del user.router :", process)
+           // res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
             
-            const mensaje = `
+              const mensaje = `
                 <h1>¡Bienvenido, ${firstname}!</h1>
                 <p>Gracias por registrarte en nuestra plataforma.</p>
                `;
 
-             await enviarCorreo(username, 'Bienvenido a Nuestra Plataforma', mensaje);
+                await enviarCorreo(username, 'Bienvenido a Nuestra Plataforma', mensaje);
             
-             res.redirect('/views/profile');
-             //res.redirect("/products");
-
+                res.redirect('/products');
         } else {
             res.status(401).send({ error: 'Ya existe un usuario con ese email', data: [] });
         }
@@ -99,8 +98,9 @@ router.get('/githubcallback', passport.authenticate('ghlogin', { failureRedirect
 
         // res.status(200).send({ error: null, data: 'Usuario autenticado, sesión iniciada!' });
        console.log("Datos de la sesion en ghlogin: ", req.session);
-        res.redirect('/products/realtimeproducts');
-        //res.redirect('/profile');
+              
+       //res.redirect('/products/realtimeproducts');
+        res.redirect('/products');
     });
 });
 
@@ -111,18 +111,22 @@ router.post('/jwtlogin', async (req, res) => {
     
     if (username != '' && password != '') {
         const process = await manager.authenticate(username, password);
-        console.log("Login manual jwt: ", username, password);
+        console.log("Login manual jwt1: ", username, password);
+        console.log("Login manual jwt2: ", process);
         if (process) {
-            const payload = { username: username, admin: true };
+            // Extraer el rol del usuario autenticado
+            const role = process.role || "USER"; // Por si  `process` no tenga esta propiedad
+
+            // Crear el payload del token con el rol del usuario
+            const payload = { username, role };
+            
             const token = createToken(payload, '1h');
-            
-            //res.status(200).send({ error: null, data: { autentication: 'ok', token: token } });
-            
-            // Aqui redirijo a la lista de productos 
-            console.log("Datos de la sesion manual con JWT: ", req.session, payload);           
-            res.redirect('/products');
-            
-           
+            console.log("En user.router antes redirect process y token: ", process, token);
+           // res.status(200).send({ error: null, data: { autentication: 'ok', token: token } });
+           // res.redirect("/products");
+           res.redirect(`/products?access_token=${token}`); // mas seguro seria usar una cookie
+
+
         } else {
             res.status(401).send({ error: 'Usuario o clave no válidos', data: [] });
         }

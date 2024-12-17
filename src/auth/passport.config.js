@@ -49,9 +49,9 @@ const initAuthStrategies = () => {
             try {
                 // Si passport llega hasta acá, es porque la autenticación en Github
                 // ha sido correcta, tendremos un profile disponible
-                console.log("Este es el profile de gh a pp: ", profile._json?.email);
+                console.log("En passport.config este es el profile de ghlogin: ", profile._json?.email);
                 const email = profile._json?.email || null;
-                console.log("Este es el email :", email);
+                console.log("En passport.config este es el email :", email);
                 // Necesitamos que en el profile haya un email
                 // Más adelante agregaremos un control alternativo en caso
                 // que el profile llegado desde Github no contenga ningún email usable
@@ -73,8 +73,10 @@ const initAuthStrategies = () => {
                             password: 'none',
                             cart: emptyCart._id // asigna el ID del carrito al campo `cart`
                         }
-                        console.log("Este es el user nuevo de gh a pp: ", user);
+                        console.log("En passport.config este es el user nuevo USER y cart vacio: ", user);
                         const process = await manager.add(user);
+
+                        // Aqui if process enviar mail de registrado
 
                         return done(null, process);
                     } else {

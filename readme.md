@@ -53,6 +53,11 @@ PROYECTO FINAL:
 Se incluye el modelo MVC (Models, Views, Controllers aislando la capa de acceso a datos de los manager para trabajar con cualquier base de datos).
 Los manager se pasan a llamar user.service.mongo y los Controllers user.controller.js que llaman a las funciones para el CRUD.
 
+Se incluye DTO y envio de mail al registrarse un usuario con nodemailer. En este endpoint al agregar un producto al carrito se crea el carrito con el producto.
+
+Si un usuario se registra manual se redirige al endpoint /products
+
+Si se registra con github se agrego auth en el endpoint realtimeproducts para verificar que sea ADMIN, si no lo es no permite ingresar al endpoint.
 
 Errores que no crashean la aplicacion:
 
