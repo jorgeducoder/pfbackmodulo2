@@ -42,6 +42,14 @@ class CartController {
         };
     };
 
+    getCartByUserid = async (uid) => {
+        try {
+            return await service.getCartByUser(uid);
+        } catch (err) {
+            return err.message;
+        };
+    };
+
     add = async (data) => {
         try {
             return await service.addCart(data);

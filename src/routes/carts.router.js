@@ -3,6 +3,9 @@ import { Router } from "express";
 //import { ProductManagerMdb } from "../dao/productManagerMdb.js";
 import CartController from '../controllers/cart.controller.js';
 import ProductController from '../controllers/product.controller.js';
+import { authMiddleware } from '../utils.js';
+
+import { verifyToken } from "../utils.js";
 // Define los nuevos objetos CM y PM con los metodos y datos del json
 const CM = new CartController;
 
@@ -12,6 +15,9 @@ const PM = new ProductController;
  
 
 const cartsRouter = Router();
+
+//cartsRouter.use(authMiddleware); // Ver si es necesario. Aplica el middleware a todas las rutas de este router. 
+
 
 
 cartsRouter.get("/", async (req, res) => {
@@ -55,10 +61,12 @@ cartsRouter.post("/", async (req, res) => {
 
 
 
-cartsRouter.post("/productos/:pid", async (req, res) => {
+/*cartsRouter.post("/productos/:pid", async (req, res) => {
     
     //Desde la raiz mas api/carts/ se agrega un producto dado a un carrito nuevo. usado desde HB. Ruta definida en app.js
     
+    // Para BE Mod2 ya viene el carrito creado y la sesion del usuario, habria que agregar productos mientras  el usuario
+    // vea el carrito/agregue productos/vea carrito y salga, generar ticket y terminar transaccion
     const { pid } = req.params;
     let { quantity } = req.body;
     
@@ -103,9 +111,92 @@ cartsRouter.post("/productos/:pid", async (req, res) => {
         console.error(error);
         res.status(500).send({ error: "Error interno del servidor." });
     }
+});*/
+
+cartsRouter.post("/productos/:pid", authMiddleware, async (req, res) => {
+    
+    //Desde la raiz mas api/carts/ se agrega un producto dado a un carrito nuevo. usado desde HB. Ruta definida en app.js
+    
+    // Para BE Mod2 ya viene el carrito creado y la sesion del usuario, habria que agregar productos mientras  el usuario
+    // vea el carrito/agregue productos/vea carrito y salga, generar ticket y terminar transaccion
+    // Se deja de crear un carrito vacio porque ya viene en los datos del usuario. A ese carrito es al que se deben agregar los productos.
+    
+    const { pid } = req.params;
+    let { quantity } = req.body;
+    
+    if (!quantity) {
+        quantity = 1 } 
+
+    
+    if (!pid || !quantity) {
+        return res.status(400).send({ error: "Faltan datos para crear o agregar al carrito" });
+    }
+
+    try {
+
+        // Verificar si el producto existe
+        const resultp = await PM.getOne(pid);
+       
+        if (resultp.error) {
+            return res.status(404).send({ error: "Producto no existe" });
+        }
+
+        // veo que datos tengo de la sesion de usuario y llega hasta aqui desde endpoint /products
+        const { method, user } = req.authUser;
+
+        let cartId;
+        if (method === 'GitHub') {
+            cartId = user.cartId;
+            if (!cartId) {
+                return res.status(400).send({ error: "No se encontró carrito asociado al usuario de GitHub." });
+            }
+        } else if (method === 'JWT') {
+            cartId = user.cart;
+            if (!cartId) {
+                return res.status(400).send({ error: "No se encontró carrito asociado al usuario de JWT." });
+            }
+        }
+
+        console.log(`Carrito asociado (${method}): ${cartId}`);
+
+        //return res.status(201).send({ message: "No quiero dar de alta carrito desde cartsRouter.post" });
+    
+        // Agregar carrito vacio no lo hago si es GH, si es JWT lo hago y tengo que asociarselo al username.
+         // veo que datos tengo de la sesion de usuario y llega hasta aqui desde endpoint /products
+        //const userGitHubLogin = req.session?.passport?.user;
+       // const userJWTLogin = req.user;
+      //  console.log("En post productos/:pid de carts.router: ", userGitHubLogin, userJWTLogin)
+        
+        const resultc = await CM.add();
+        if (resultc.errors) {
+            return res.status(404).send({ errors: "Error al crear nuevo carrito en cartsRouter.put" });
+        }
+        
+        // veo que datos tengo de la sesion de usuario y llega hasta aqui desde endpoint /products
+       // const userGitHubLogin = req.session?.passport?.user?;
+       // const userJWTLogin = req.user?;
+
+
+        let cid = resultc._id;
+
+        // Intentar agregar o actualizar el producto en el carrito
+        const result = await CM.updateProd(cid, pid, quantity);
+
+        // Verificar si ocurrió un error en addproductCart
+        
+        if (result.error) {
+            
+            return res.status(400).send({ error: result.error });
+        }
+
+        // Responder según el resultado exitoso
+        res.status(201).send({ message: result.message });
+    } catch (error) {
+        // Manejar cualquier error inesperado
+        console.error(error);
+        res.status(500).send({ error: "Error interno del servidor." });
+    }
 });
-
-
 
 cartsRouter.put("/:cid/productos/:pid", async (req, res) => {
     const { cid, pid } = req.params;

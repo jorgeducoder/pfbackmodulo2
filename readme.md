@@ -22,7 +22,7 @@ http://localhost:8080/products?search=Muzza&limit=5&page=1 busca los productos q
 
 En el endpoint http://localhost:8080/products/realtimeproducts muestra el formulario para dar de alta un producto y la lista actualizada con el producto dado de alta.Tambien en la lista se permite dar de baja un producto.
 
-En el endpoint http://localhost:8080/products/cart/<cid> muestra los productos de un carrito.
+En el endpoint http://localhost:8080/products/cart/66f3650633e31703b2f07743 muestra los productos de un carrito.
 
 MANEJO DE USUARIOS:
 

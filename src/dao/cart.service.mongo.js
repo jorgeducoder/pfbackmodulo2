@@ -27,11 +27,34 @@ class CartService {
     }
 
     
-    async getcartProducts(cid) {
+    /*async getcartProducts(cid) {
         try {
             // Buscar el carrito por su ID y populate de los productos con nombre modelo y atributo de los ID en el array de productos
             const cart = await cartModel.findById(cid).populate('products._id');
+            console.log("En cart.service populate. ", cart);
+            if (!cart) {
+                return { error: 'Carrito no encontrado' };
+            }
     
+            return cart;
+        } catch (err) {
+            console.error('Error al obtener los productos del carrito:', err);
+            return { error: 'Error al obtener el carrito' };
+        }
+    }*/
+
+    async getcartProducts(cid) {
+        try {
+            // Buscar el carrito por su ID y populate de los productos con nombre modelo y atributo de los ID en el array de productos
+            const cart = await cartModel.findById(cid).populate({
+                path: 'products._id', // El campo que quieres popular
+                model: 'products',    // Modelo al que está referenciado
+            });
+             
+                       
+           // const cart = await cartModel.findById(cid).populate('products._id');
+            
+           console.log("En cart.service populate. ", cart);
             if (!cart) {
                 return { error: 'Carrito no encontrado' };
             }
@@ -42,8 +65,47 @@ class CartService {
             return { error: 'Error al obtener el carrito' };
         }
     }
-    
 
+    /*async getcartByUser(uid) {
+        try {
+            // Buscar el carrito de un usuario por su ID 
+
+            const cart = await cartModel.findOne(uid); // Obtener el carrito del usuario (si existe)
+          
+            console.log("En cart.service por  ", cart);
+            if (!cart) {
+                return { error: 'Carrito no encontrado' };
+            }
+    
+            return cart;
+        } catch (err) {
+            console.error('Error al obtener carrito de un usuario:', err);
+            return { error: 'Error al obtener el carrito' };
+        }
+    }*/
+
+    async getCartByUser(uid) {
+        try {
+            // Asegúramos de que uid sea un ObjectId válido
+            if (!ObjectId.isValid(uid)) {
+                return { error: 'ID de usuario no válido' };
+            }
+    
+            // Buscar el carrito asociado al usuario
+            const cart = await cartModel.findOne({ cart: uid }); // Asegúrate de que "userId" sea el campo correcto en tu esquema
+    
+            console.log("En cart.service:", cart);
+    
+            if (!cart) {
+                return { error: 'Carrito no encontrado' };
+            }
+    
+            return cart;
+        } catch (err) {
+            console.error('Error al obtener carrito de un usuario:', err);
+            return { error: 'Error al obtener el carrito' };
+        }
+    }
 
     async addCart(cart) {
 

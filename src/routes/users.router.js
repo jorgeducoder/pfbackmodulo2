@@ -69,7 +69,7 @@ router.post('/register', async (req, res) => {
 
         if (process) { 
            console.log(" Paso el if en register del user.router :", process)
-           // res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
+            res.status(200).send({ error: null, data: 'Usuario registrado, bienvenido!' });
             
               const mensaje = `
                 <h1>¡Bienvenido, ${firstname}!</h1>
@@ -78,7 +78,7 @@ router.post('/register', async (req, res) => {
 
                 await enviarCorreo(username, 'Bienvenido a Nuestra Plataforma', mensaje);
             
-                res.redirect('/products');
+                //res.redirect('/products'); Si redirijo tengo que crear un token y pasarlo como parametro
         } else {
             res.status(401).send({ error: 'Ya existe un usuario con ese email', data: [] });
         }
@@ -123,11 +123,23 @@ router.post('/jwtlogin', async (req, res) => {
         console.log("Login manual jwt1: ", username, password);
         console.log("Login manual jwt2: ", process);
         if (process) {
+           
             // Extraer el rol del usuario autenticado
             const role = process.role || "USER"; // Por si  `process` no tenga esta propiedad
+            const cartId = process.cart || null; // Obtener el carrito asociado del usuario
 
+              // Crear el payload del token con la información del usuario
+            const payload = { 
+                id: process._id.toString(), // ID único del usuario, convertido a string
+                username,                  // Nombre del usuario
+                role,                      // Rol del usuario
+                cartId: cartId ? cartId.toString() : null // ID del carrito asociado, convertido a string
+            };
+            
+            
+            
             // Crear el payload del token con el rol del usuario
-            const payload = { username, role };
+            //const payload = { username, role };
             
             const token = createToken(payload, '1h');
             console.log("En user.router antes redirect process y token: ", process, token);

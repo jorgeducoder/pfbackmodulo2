@@ -15,7 +15,11 @@ import UserService from '../dao/user.service.mongo.js';
 import { createHash, isValidPassword } from '../utils.js';
 import UserDTO from '../dao/users.dto.js';
 
+import CartService from '../dao/cart.service.mongo.js';
+
 const service = new UserService();
+
+const cartService = new CartService();
 
 
 class UserController {
@@ -75,7 +79,7 @@ class UserController {
         }
     }
 
-    authenticate = async (user, pass) => {
+   /* authenticate = async (user, pass) => {
         try {
             const filter = { email: user };
             const foundUser = await service.get(filter);
@@ -91,9 +95,30 @@ class UserController {
         } catch (err) {
             return err.message;
         }
-    }
+    }*/
 
-    register = async (data) => {
+    authenticate = async (user, pass) => {
+        try {
+            const filter = { email: user };
+            const foundUser = await service.get(filter);
+            console.log("En authenticate de user.controller:", foundUser);
+    
+            if (foundUser && isValidPassword(pass, foundUser.password)) {
+                const { password, ...filteredUser } = foundUser;
+                console.log("En authenticate Usuario autenticado:", filteredUser);
+                return filteredUser; // Incluye cartId si es necesario en el token o flujo porque fue agregado en el register
+            } else {
+                return null;
+            }
+        } catch (err) {
+            console.error("Error en authenticate:", err);
+            return err.message;
+        }
+    };
+    
+
+
+    /*register = async (data) => {
         try {
             const filter = { email: data.username };
             const user = await service.get(filter);
@@ -118,7 +143,46 @@ class UserController {
         } catch (err) {
             return err.message;
         }
-    }
+    }*/
+
+    register = async (data) => {
+        try {
+            const filter = { email: data.username };
+            const user = await service.get(filter);
+    
+            if (user === null) {
+                // Crear carrito vacío para el usuario cuando se registra y luego propagar cartid 
+                // Hash de contraseña y normalización de datos
+                const newCart = await cartService.addCart();
+                data.password = createHash(data.password);
+                // Asignar el carrito creado al usuario
+                data.cart = newCart._id;
+               
+                //const userDTO = new UserDTO(data, data.password, data.cart); no funciona por ahora
+    
+                // Crear usuario
+               // const newUser = await service.add(userDTO);
+    
+                
+                // para agregar productos luego de la autenticacion
+               // const newCart = await cartService.addCart(); 
+                console.log("En user controller register: ", newCart, data);
+                // Asociar el carrito al usuario
+                //newUser.cart = newCart._id;
+               // await newUser.save(); // O actualizar el usuario en base de datos
+    
+                //console.log("User. controller Usuario registrado con carrito:", newUser);
+                //return newUser;
+                return await service.add(data);
+            } else {
+                return null; // Usuario ya registrado
+            }
+        } catch (err) {
+            console.error("Error en register:", err);
+            return err.message;
+        }
+    };
+    
 }
 
 

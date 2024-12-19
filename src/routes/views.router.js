@@ -96,29 +96,6 @@ router.get("/", verifyToken, async (req, res) => {
 // Para proyecto final mod2 cambio llamadas a funciones porque pasamos por el Controller
 // en endpoint products/realtimeproducts muestra form para agregar y lista actualizada
 
-/*router.get("/realtimeproducts", async (req, res) => {    
-  // Utilizo GH variando permisos entre USER y ADMIN para trabajar con unico metodo de autenticacion
-  try {
-      // Verificar si el usuario tiene rol de ADMIN
-      if (req.session.passport.user.role === "ADMIN") {
-          // Llamo al método products.get porque uso el controller
-          const productList = await products.get();
-          
-          // Renderizo la plantilla Handlebars definida
-          res.render("realTimeProducts", {
-              title: "Real Time Products",
-              style: "realtimeproducts.css",
-              productList
-          });
-      } else {
-          // Si el usuario no es ADMIN
-          res.status(401).send({ error: 'Usuario no es Admin RTP', data: [] });
-      }
-  } catch (error) {
-      // Manejo de errores
-      res.status(500).send(error.message);
-  }
-});*/
 
 // Con cambios para validar role de admin
 
