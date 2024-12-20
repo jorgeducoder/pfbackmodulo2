@@ -2,6 +2,14 @@ import express from "express";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 
+// Agregadas para usarlas con usuarios
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import FileStore from 'session-file-store';
+import passport from 'passport';
+
+
+
 import __dirname from "./utils.js";
 
 import './utils/handlebarsHelper.js';  // Importar los helpers de Handlebars
@@ -12,17 +20,14 @@ import router from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
 
+// Para autenticar en endpoints que quiera
+//import authRouter from './routes/auth.router.js'; de otro pique
+
 
 // lo utilizo en el socket import { ProductManager } from "./service/ProductManager.js";
 import Socket from "./socket.js";
 import mongoose from "mongoose";
 
-// Agregadas para usarlas con usuarios
-
-import cookieParser from 'cookie-parser';
-import session from 'express-session';
-import FileStore from 'session-file-store';
-import passport from 'passport';
 
 import config from './config.js';
 
@@ -94,7 +99,8 @@ app.use("/products", viewsRouter); // endpoint donde se muestra vista de /produc
 
 app.use('/views', viewsRouter); // endpoint donde se registra o se logea un usuario con distintas estrategias, session, jwt, pp
 app.use('/api/users', usersRouter); // endpoint para mostrar usuarios ingresados
-
+// Para autenticar usuarios antes de ir al endpoint
+//app.use('/auth', authRouter); de otro pique
 //app.use('/static', express.static(`${config.DIRNAME}/public`));  ya estaria mas arriba
 
 // Se inicia un servidor HTTP

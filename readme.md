@@ -24,6 +24,8 @@ En el endpoint http://localhost:8080/products/realtimeproducts muestra el formul
 
 En el endpoint http://localhost:8080/products/cart/66f3650633e31703b2f07743 muestra los productos de un carrito.
 
+http://localhost:8080/products/cart/6765a74b2a3e6484a22fd092
+
 MANEJO DE USUARIOS:
 
 Se agrega el manager de usuarios, los views y los users router correspndientes. 

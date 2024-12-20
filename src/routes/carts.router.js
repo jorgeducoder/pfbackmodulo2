@@ -6,6 +6,8 @@ import ProductController from '../controllers/product.controller.js';
 import { authMiddleware } from '../utils.js';
 
 import { verifyToken } from "../utils.js";
+
+
 // Define los nuevos objetos CM y PM con los metodos y datos del json
 const CM = new CartController;
 
@@ -113,7 +115,7 @@ cartsRouter.post("/", async (req, res) => {
     }
 });*/
 
-cartsRouter.post("/productos/:pid", authMiddleware, async (req, res) => {
+cartsRouter.post("/productos/:pid", verifyToken, authMiddleware, async (req, res) => {
     
     //Desde la raiz mas api/carts/ se agrega un producto dado a un carrito nuevo. usado desde HB. Ruta definida en app.js
     
@@ -124,6 +126,11 @@ cartsRouter.post("/productos/:pid", authMiddleware, async (req, res) => {
     const { pid } = req.params;
     let { quantity } = req.body;
     
+    const { method, user } = req.authUser;
+
+    console.log(`Método de autenticación: ${method}`);
+    console.log(`Usuario autenticado: ${JSON.stringify(user)}`);
+
     if (!quantity) {
         quantity = 1 } 
 
@@ -143,10 +150,10 @@ cartsRouter.post("/productos/:pid", authMiddleware, async (req, res) => {
 
         // veo que datos tengo de la sesion de usuario y llega hasta aqui desde endpoint /products
         const { method, user } = req.authUser;
-
-        let cartId;
+        const cartId = user.cart ? user.cart.toString() : null; 
+       
         if (method === 'GitHub') {
-            cartId = user.cartId;
+            console.log(`Usuario autenticado github: ${JSON.stringify(user.cart)}`);
             if (!cartId) {
                 return res.status(400).send({ error: "No se encontró carrito asociado al usuario de GitHub." });
             }

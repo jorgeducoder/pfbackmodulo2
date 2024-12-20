@@ -47,6 +47,8 @@ export const createToken = (payload, duration) => jwt.sign(payload, config.SECRE
  * Middleware para verificar autenticación con JWT o GitHub y usar en /products para tener el carrito ya creado del usuarios
  */
 export const authMiddleware = (req, res, next) => {
+    // Sesion de Github
+    
     if (req.session?.passport?.user) {
         // Usuario autenticado por GitHub
         req.authUser = {
@@ -54,19 +56,35 @@ export const authMiddleware = (req, res, next) => {
             user: req.session.passport.user,
         };
         console.log(`En authMiddleware Autenticado por GitHub:`, req.authUser.user);
-    } else if (req.user) {
+    } 
+    /*const token = req.headers.authorization?.split(' ')[1] || req.cookies['token'] || req.query.access_token;
+    if (token) {
         // Usuario autenticado por JWT
+        jwt.verify(token, config.SECRET, (err, payload) => {
+            if (!err) {
+                req.authUser = {
+                    method: 'JWT',
+                    user: payload,
+                };
+            }
+        });
+        console.log(`En authMiddleware. Autenticado por JWT:`, req.authUser.user);
+    } */
+
+        // Verificar si el token ya fue procesado por verifyToken
+    if (req.user) {
         req.authUser = {
             method: 'JWT',
             user: req.user,
         };
         console.log(`En authMiddleware. Autenticado por JWT:`, req.authUser.user);
-    } else {
-        // Sin autenticación válida
-        return res.status(401).send({ error: 'En utils authMiddleware. No autenticado' });
+        return next(); // Usuario autenticado por JWT
     }
-    next();
-};
+    // Si no está autenticado ni por GitHub ni por JWT
+    console.error('En authMiddleware. No autenticado.');
+    return res.status(401).send({ error: 'No autenticado.' });
+}; 
+   
 
 
 /**
