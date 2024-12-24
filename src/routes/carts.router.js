@@ -8,7 +8,6 @@ import { authMiddleware } from '../utils.js';
 
 import { verifyToken } from "../utils.js";
 
-import Ticket  from '../dao/models/ticket.Model.js';
 
 // Define los nuevos objetos CM y PM con los metodos y datos del json
 const CM = new CartController;
@@ -16,7 +15,8 @@ const CM = new CartController;
 // La nueva clase PM en principio la necesito para ver si el producto que se ingresa
 // para incorporar al carrito esta en la clase productos
 const PM = new ProductController;
- //const TM = new Ticket;
+ 
+//const TM = new Ticket;
  const TM = new TicketController;
 
 const cartsRouter = Router();
@@ -64,66 +64,10 @@ cartsRouter.post("/", async (req, res) => {
 })
 
 
-
-
-/*cartsRouter.post("/productos/:pid", async (req, res) => {
-    
-    //Desde la raiz mas api/carts/ se agrega un producto dado a un carrito nuevo. usado desde HB. Ruta definida en app.js
-    
-    // Para BE Mod2 ya viene el carrito creado y la sesion del usuario, habria que agregar productos mientras  el usuario
-    // vea el carrito/agregue productos/vea carrito y salga, generar ticket y terminar transaccion
-    const { pid } = req.params;
-    let { quantity } = req.body;
-    
-    if (!quantity) {
-        quantity = 1 } 
-
-    
-    if (!pid || !quantity) {
-        return res.status(400).send({ error: "Faltan datos para crear o agregar al carrito" });
-    }
-
-    try {
-
-        // Verificar si el producto existe
-        const resultp = await PM.getOne(pid);
-       
-        if (resultp.error) {
-            return res.status(404).send({ error: "Producto no existe" });
-        }
-
-        // Agregar carrito vacio
-        const resultc = await CM.add();
-        if (resultc.errors) {
-            return res.status(404).send({ errors: "Error al crear nuevo carrito en cartsRouter.put" });
-        }
-        let cid = resultc._id;
-
-        // Intentar agregar o actualizar el producto en el carrito
-        const result = await CM.updateProd(cid, pid, quantity);
-
-        // Verificar si ocurrió un error en addproductCart
-        
-        if (result.error) {
-            
-            return res.status(400).send({ error: result.error });
-        }
-
-        // Responder según el resultado exitoso
-        res.status(201).send({ message: result.message });
-    } catch (error) {
-        // Manejar cualquier error inesperado
-        console.error(error);
-        res.status(500).send({ error: "Error interno del servidor." });
-    }
-});*/
-
 cartsRouter.post("/productos/:pid", verifyToken, authMiddleware, async (req, res) => {
     
     //Desde la raiz mas api/carts/ se agrega un producto dado a un carrito nuevo. usado desde HB. Ruta definida en app.js
     
-    // Para BE Mod2 ya viene el carrito creado y la sesion del usuario, habria que agregar productos mientras  el usuario
-    // vea el carrito/agregue productos/vea carrito y salga, generar ticket y terminar transaccion
     // Se deja de crear un carrito vacio porque ya viene en los datos del usuario. A ese carrito es al que se deben agregar los productos.
     
     const { pid } = req.params;
@@ -169,8 +113,7 @@ cartsRouter.post("/productos/:pid", verifyToken, authMiddleware, async (req, res
 
         console.log(`Carrito asociado (${method}): ${cartId}`);
 
-        //return res.status(201).send({ message: "No quiero dar de alta carrito desde cartsRouter.post" });
-    
+           
         // Agregar carrito vacio no lo hago si es GH, si es JWT lo hago y tengo que asociarselo al username.
          // veo que datos tengo de la sesion de usuario y llega hasta aqui desde endpoint /products
         //const userGitHubLogin = req.session?.passport?.user;
@@ -371,7 +314,7 @@ cartsRouter.post('/:cid/purchase', async (req, res) => {
                 code: generateSequentialCode(), // Función para generar un código único
                 purchase_datetime: new Date(), // Fecha y hora actuales
                 amount: totalAmount, // Total calculado durante el bucle
-                //purchaser: cart.user.email, // Lo tengo que sacar de user
+                //purchaser: cart.user.email, // Lo tengo que sacar de user o sesion
                 products: productsToIncludeInTicket
                                     
                 }

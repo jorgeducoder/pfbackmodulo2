@@ -79,3 +79,7 @@ Se comenta mongo.singleton porque no lista productos en  /productos y /realtimep
 
 Se deja conexion a mongodb en app.js porque si se elimina da problemas al cargar los datos en /products.
 
+A mejorar:
+--------------------------------------
+
+Mover la autorizacion y autenticacion al mismo midd 
