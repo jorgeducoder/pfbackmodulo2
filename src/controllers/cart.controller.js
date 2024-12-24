@@ -93,6 +93,21 @@ class CartController {
         }
     }
 
+    updateCartController = async (cartId, updatedProducts) => {
+        try {
+            if (!updatedProducts || updatedProducts.length === 0) {
+                throw new Error("No se proporcionaron productos para actualizar.");
+            }
+
+            // Llamar al servicio para actualizar el carrito
+            const updatedCart = await service.updateCart(cartId, updatedProducts);
+
+            return { success: true, cart: updatedCart };
+        } catch (error) {
+            console.error("Error al actualizar el carrito:", error);
+            return { success: false, error: error.message };
+        }
+    }
 
 }
     export default CartController;

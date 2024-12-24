@@ -24,7 +24,7 @@ En el endpoint http://localhost:8080/products/realtimeproducts muestra el formul
 
 En el endpoint http://localhost:8080/products/cart/66f3650633e31703b2f07743 muestra los productos de un carrito.
 
-http://localhost:8080/products/cart/6765a74b2a3e6484a22fd092
+http://localhost:8080/products/cart/6765a74b2a3e6484a22fd092 este es otro carrito con productos.
 
 MANEJO DE USUARIOS:
 
@@ -64,8 +64,14 @@ En ambas estrategias cuando el usuario hace login, si el usuario es USER se redi
 Si el usuario es ADMIN se redirige al endpoint /products/realtimeproducts
 
 
+MANEJO DE TICKETS:
+
+En el endpoint http://localhost:8080/api/carts/66f3650633e31703b2f07743/purchase  verifica el stock de los productos de un carrito y para el que tiene stock genera un ticket, para el resto genera un json y los deja en el carrito. 
+
+
 
 Errores que no crashean la aplicacion:
+--------------------------------------
 
 Cuando se registra un usuario o cuando hace login, se corta la conexion al servidor al ir al endpoint, pero si se reintenta ingresa al endpoint. Esto sucede con cualquier tipo de registro y login.
 

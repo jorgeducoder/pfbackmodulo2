@@ -27,22 +27,6 @@ class CartService {
     }
 
     
-    /*async getcartProducts(cid) {
-        try {
-            // Buscar el carrito por su ID y populate de los productos con nombre modelo y atributo de los ID en el array de productos
-            const cart = await cartModel.findById(cid).populate('products._id');
-            console.log("En cart.service populate. ", cart);
-            if (!cart) {
-                return { error: 'Carrito no encontrado' };
-            }
-    
-            return cart;
-        } catch (err) {
-            console.error('Error al obtener los productos del carrito:', err);
-            return { error: 'Error al obtener el carrito' };
-        }
-    }*/
-
     async getcartProducts(cid) {
         try {
             // Buscar el carrito por su ID y populate de los productos con nombre modelo y atributo de los ID en el array de productos
@@ -52,8 +36,7 @@ class CartService {
             });
              
                        
-           // const cart = await cartModel.findById(cid).populate('products._id');
-            
+           
            console.log("En cart.service populate. ", cart);
             if (!cart) {
                 return { error: 'Carrito no encontrado' };
@@ -66,24 +49,7 @@ class CartService {
         }
     }
 
-    /*async getcartByUser(uid) {
-        try {
-            // Buscar el carrito de un usuario por su ID 
-
-            const cart = await cartModel.findOne(uid); // Obtener el carrito del usuario (si existe)
-          
-            console.log("En cart.service por  ", cart);
-            if (!cart) {
-                return { error: 'Carrito no encontrado' };
-            }
     
-            return cart;
-        } catch (err) {
-            console.error('Error al obtener carrito de un usuario:', err);
-            return { error: 'Error al obtener el carrito' };
-        }
-    }*/
-
     async getCartByUser(uid) {
         try {
             // Asegúramos de que uid sea un ObjectId válido
@@ -92,7 +58,7 @@ class CartService {
             }
     
             // Buscar el carrito asociado al usuario
-            const cart = await cartModel.findOne({ cart: uid }); // Asegúrate de que "userId" sea el campo correcto en tu esquema
+            const cart = await cartModel.findOne({ cart: uid }); 
     
             console.log("En cart.service:", cart);
     
@@ -159,6 +125,30 @@ class CartService {
         }
     }
     
+    // Actualiza un carrito con productos no comprados por falta de stock
+    async updateCart(cartId, updatedProducts) {
+        try {
+            // Validar el carrito y los productos
+            if (!cartId || !updatedProducts || updatedProducts.length === 0) {
+                throw new Error("Parámetros inválidos para actualizar el carrito.");
+            }
+
+            try {
+                return await cartModel.findByIdAndUpdate(cartId, updatedProducts, { new: true });
+            } catch (error) {
+                console.error("Error en CartManager.updateCart:", error);
+                throw error;
+            }
+            
+            
+        } catch (error) {
+            console.error("Error en CartService.updateCart:", error);
+            throw error;
+        }
+    }
+
+
+
     async deleteProductFromCart(cid, pid) {
         try {
             // Buscar el carrito por su ID

@@ -92,6 +92,29 @@ class ProductService {
 
     }
     
+    
+    // Método para actualizar el stock de un producto
+    async updateProductQuantity(productId, newQuantity) {
+        try {
+            const updatedProduct = await productModel.findByIdAndUpdate(
+                productId,
+                { stock: newQuantity },
+                { new: true } // Devuelve el documento actualizado
+            );
+
+            if (!updatedProduct) {
+                throw new Error(`En product service No se encontró el producto con ID: ${productId}`);
+            }
+
+            return updatedProduct;
+        } catch (error) {
+            console.error(`En product service Error actualizando el stock del producto: ${error.message}`);
+            throw error;
+        }
+    }
+
+
+
 }
 //Exporto la clase
 

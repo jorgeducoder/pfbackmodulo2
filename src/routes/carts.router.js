@@ -3,10 +3,12 @@ import { Router } from "express";
 //import { ProductManagerMdb } from "../dao/productManagerMdb.js";
 import CartController from '../controllers/cart.controller.js';
 import ProductController from '../controllers/product.controller.js';
+import TicketController from '../controllers/ticket.controller.js';
 import { authMiddleware } from '../utils.js';
 
 import { verifyToken } from "../utils.js";
 
+import Ticket  from '../dao/models/ticket.Model.js';
 
 // Define los nuevos objetos CM y PM con los metodos y datos del json
 const CM = new CartController;
@@ -14,7 +16,8 @@ const CM = new CartController;
 // La nueva clase PM en principio la necesito para ver si el producto que se ingresa
 // para incorporar al carrito esta en la clase productos
 const PM = new ProductController;
- 
+ //const TM = new Ticket;
+ const TM = new TicketController;
 
 const cartsRouter = Router();
 
@@ -40,7 +43,7 @@ cartsRouter.get('/:cid', async (req, res) => {
     // Dado el id de un carrito lo muestra con sus productos utiizando populate
     let cartId = req.params.cid;
     const cart = await CM.getCartProd(cartId);
-
+    console.log("En cartsrouter get de carrito y productos: ", cart)
     if (cart.error) {
         return res.status(404).send({ error: cart.error });
     }
@@ -284,6 +287,105 @@ cartsRouter.delete("/:cid", async (req, res) => {
         }
 
         res.status(200).send({ message: result.message });
+    } catch (error) {
+        console.error("Error en el servidor:", error);
+        res.status(500).send({ error: "Error interno del servidor." });
+    }
+});
+
+cartsRouter.post('/:cid/purchase', async (req, res) => {
+
+    const cartId = req.params.cid;
+    const cart = await CM.getOne(cartId);
+    console.log("En purchase : ", cart);
+    let totalAmount = 0; // Inicializamos el total del carrito
+
+    try {
+        // Verificar si el carrito existe
+        if (!cart) {
+            return res.status(404).json({ message: 'En Post Tickets: Carrito no encontrado' });
+        }
+       // Extraer los IDs de los productos del carrito
+        const productsIds = cart.products.map(p => p._id);
+
+        const productsWithInsufficientStock = [];
+        const productsToIncludeInTicket = [];
+
+        // Buscar los productos en la coleccion de productos, utilizo get del controller que llama a getProduct del service y hace un find.lean
+        console.log("En purchase1 productos en carrito : ", productsIds);
+        
+       // console.log("En purchase1a productos en BD del carrito : ", productsEnBd);
+        
+
+        console.log("En purchase2 productos en carrito a buscar stock: ", cart.products);
+
+        // ... (lógica para verificar el stock y actualizar los productos con insufficientStock)
+
+        for (const cartProduct of cart.products) {
+            
+            console.log("En purchase3 en el for con un producto: ", cartProduct, cartProduct._id);
+           
+            const product = await PM.getOne(cartProduct._id);  // leo todos los atributos del producto
+
+            console.log("En purchase3a en el for con un producto: ", product, product.data._id, product.data.stock);
+
+            // Verifico stock y si no hay guardo la lista de productos, si hay actualizo el stock
+            if (product.data.stock < cartProduct.quantity) {
+                
+                console.log("En purchase4 cantidad menor a stock: ", product.data.stock, cartProduct.quantity);
+                //productsWithInsufficientStock.push(cartProduct._id);
+                productsWithInsufficientStock.push({
+                    _id: cartProduct._id,
+                    quantity: cartProduct.quantity,
+                });
+
+                console.log("En purchase4a cantidad menor a stock: ", productsWithInsufficientStock);
+            } else {
+              // Restar el stock del producto
+
+              console.log("En purchase5 cantidad mayor o igual a stock: ", cart.id, product.data.stock, cartProduct.quantity);
+              product.data.stock -= cartProduct.quantity;
+              //await product.save();
+              await PM.updateProductStock(product.data._id, product.data.stock);
+              // Calcular el total parcial
+             totalAmount += product.data.price * cartProduct.quantity;
+             // Agregar producto al ticket
+             productsToIncludeInTicket.push({
+                productId: cartProduct._id,
+                quantity: cartProduct.quantity,
+             });
+
+            }
+          }
+          
+
+        // Crear el ticket
+        let nextId = 1;
+        function generateSequentialCode() {
+        return nextId++;
+        }
+        
+        if (productsToIncludeInTicket.length > 0) { 
+             const ticket = {
+                
+                code: generateSequentialCode(), // Función para generar un código único
+                purchase_datetime: new Date(), // Fecha y hora actuales
+                amount: totalAmount, // Total calculado durante el bucle
+                //purchaser: cart.user.email, // Lo tengo que sacar de user
+                products: productsToIncludeInTicket
+                                    
+                }
+                console.log("En purchase 6 ticket: ", ticket);
+                await TM.add(ticket);
+        };
+        
+        
+        // Actualizar el carrito para que contenga solo productos sin stock suficiente
+        cart.products = productsWithInsufficientStock;
+        console.log("En purchase 7 productos sin stock: ", cart.products);
+        await CM.updateCartController(cartId, { products: cart.products });
+        res.json({ productsWithInsufficientStock });
+  
     } catch (error) {
         console.error("Error en el servidor:", error);
         res.status(500).send({ error: "Error interno del servidor." });

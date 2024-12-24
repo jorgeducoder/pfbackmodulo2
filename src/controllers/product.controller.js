@@ -57,5 +57,19 @@ class ProductController {
             return err.message;
         }
     }
+
+    updateProductStock = async (productId, newQuantity) => {
+        try {
+              
+           console.log("En product controller actualizar stock: ", productId, newQuantity);
+            // Actualizar la cantidad del producto
+            return await service.updateProductQuantity(productId, newQuantity);
+    
+            console.log("En product controller sali actualizar stock: ");
+        } catch (err) {
+            return err.message;
+        }
+    }
+
 }
     export default ProductController;
